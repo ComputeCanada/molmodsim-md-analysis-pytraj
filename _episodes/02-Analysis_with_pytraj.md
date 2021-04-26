@@ -170,7 +170,6 @@ In Jupyter open new notebook. Ensure that you are creating notebook with the pyt
 ### Computing RMSD 
 We are now ready to use pytraj in Jupyter notebook. First load pytraj, numpy, and matplotlib modules. Then move into the directory where the input data files are located.
 
-[View Notebook]({{ site.github.repository_url }}/blob/{{ site.github.source.branch }}/code/Notebooks/pytraj_rmsd.ipynb)
 
 ~~~
 import pytraj as pt
@@ -250,7 +249,6 @@ plt.ylabel("RMSD, Angstrom")
 {: .python}
 
 #### Parallel trajectory analysis using MPI
-[View Notebook]({{ site.github.repository_url }}/blob/{{ site.github.source.branch }}/code/Notebooks/pytraj_rmsd_mpi.ipynb)
 
 ~~~
 %cd ~/scratch/Ago-RNA_sim/sim_pmemd/2-production/
@@ -476,11 +474,9 @@ view.display(gui=True)
 
 ### Principal component analysis
 Nucleic backbone: :@O3',C3',C4',C5',O5',P
-
+Test build
 
 ### Cross-correlation analysis.
-
-[View Notebook]({{ site.github.repository_url }}/blob/{{ site.github.source.branch }}/code/Notebooks/pytraj_xcorr.ipynb)
 
 [Dynamical cross-correlation matrices](https://pubmed.ncbi.nlm.nih.gov/7563068/)
 
