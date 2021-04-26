@@ -476,20 +476,6 @@ view.display(gui=True)
 Nucleic backbone: :@O3',C3',C4',C5',O5',P
 
 
-### Cross-correlation analysis. Compare windows of 200 ps. pytraj-atomiccorr
+### Cross-correlation analysis.
 [Dynamical cross-correlation matrices](https://pubmed.ncbi.nlm.nih.gov/7563068/)
 
-#### Jupyter Hub challenges
-
-Bash variables can be set for a running python kernel from notebook:
-
-~~~
-import os
-import envbash
-amber_vars=os.path.join(os.environ.get("EBROOTAMBERTOOLS"), "amber.sh")
-envbash.load_envbash(amber_vars)
-~~~
-{: .python}
-
-I can't append to PYTHONPATH of a running kernel from a notebook?
-I have not figured out how to load modules and set up environment variables for a python kernel running in Jupyter Hub.
