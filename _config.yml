@@ -29,6 +29,8 @@ kind: "lesson"
 # See https://help.github.com/articles/repository-metadata-on-github-pages/.
 # Please don't change it: <USERNAME>/<PROJECT> is correct.
 repository: <USERNAME>/<PROJECT>
+repo_url: "https://github.com/ComputeCanada/molmodsim-md-analysis-pytraj/"
+default_branch: "gh-pages"
 
 # Email address, no mailto:
 email: "molmodsim@computecanada.ca"
