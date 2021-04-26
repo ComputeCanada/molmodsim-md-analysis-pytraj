@@ -251,6 +251,7 @@ plt.ylabel("RMSD, Angstrom")
 {: .python}
 
 #### Parallel trajectory analysis using MPI
+[View Notebook]({{ site.github.repository_url }}/blob/{{ site.github.source.branch }}/code/Notebooks/pytraj_rmsd_mpi.ipynb)
 
 ~~~
 %cd ~/scratch/Ago-RNA_sim/sim_pmemd/2-production/
@@ -479,5 +480,8 @@ Nucleic backbone: :@O3',C3',C4',C5',O5',P
 
 
 ### Cross-correlation analysis.
+
+[View Notebook]({{ site.github.repository_url }}/blob/{{ site.github.source.branch }}/code/Notebooks/pytraj_xcorr.ipynb)
+
 [Dynamical cross-correlation matrices](https://pubmed.ncbi.nlm.nih.gov/7563068/)
 
