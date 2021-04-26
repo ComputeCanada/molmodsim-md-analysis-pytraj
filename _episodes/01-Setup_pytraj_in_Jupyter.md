@@ -145,6 +145,12 @@ ssh svassili@graham.computecanada.ca -L 8888:gra798:8888
 
 Replace the *port number* and the *node name* with the appropriate values.
 
+This SSH session created tunnel from your computer to gra798. The tunnel will be active only while the session is running. Do not close this window and do not logout, this will close the tunnel and disconnect you from the notebook.
+
+Now in the browser on your local computer you can type localhost:8888, and enter the token when prompted.
+
+In Jupyter open new notebook. Ensure that you are creating notebook with the python kernel matching the active environment (env-pytraj), or kernel will fail to start!
+
 > #### Using MobaXterm (on Windows)
 >
 > Users of MobaXterm can use the "SSH Session" as usual to open the *first* terminal tab which they 
@@ -156,12 +162,6 @@ Replace the *port number* and the *node name* with the appropriate values.
 > In the *local terminal* we then use the same `ssh` command as shown above to create the SSH-tunnel
 > ![SSH command in local terminal]({{ page.root }}/fig/mobaxterm_ssh_command.png)
 {: .callout}
-
-This SSH session created tunnel from your computer to gra798. The tunnel will be active only while the session is running. Do not close this window and do not logout, this will close the tunnel and disconnect you from the notebook.
-
-Now in the browser on your local computer you can type localhost:8888, and enter the token when prompted.
-
-In Jupyter open new notebook. Ensure that you are creating notebook with the python kernel matching the active environment (env-pytraj), or kernel will fail to start!
 
 > #### Uninstalling virtual environment from Jupyter:
 >
