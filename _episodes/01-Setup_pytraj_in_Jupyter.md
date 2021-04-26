@@ -135,21 +135,33 @@ Do not close this window, closing it will terminate the server. Note the port nu
 The message in the example above informs that notebook server is listening at port 8888 of the node gra798. Compute nodes cannot be accessed directly from the Internet, but we can connect to the login node, and the login node can connect any compute node. Thus, connection to a compute node should be also possible. How do we connect to the node gra798 at port 8888? We can instruct ssh client program to map port 8888 of gra798 to our local computer. This type of connection is called "ssh tunneling" or "ssh port forwarding". Ssh tunneling allows transporting networking data between computers over an encrypted SSH connection.
 
 
-![]({{ page.root }}/fig/ssh_tunnel.svg)
+![schematic of two SSH-tunnels]({{ page.root }}/fig/ssh_tunnel.svg)
 
-Open ANOTHER terminal tab or window and run the command:
+Open **another** terminal tab or window and run the command:
 ~~~
 ssh svassili@graham.computecanada.ca -L 8888:gra798:8888
 ~~~
 {: .bash}
 
-Replace the port number and the node name with the appropriate values.
+Replace the *port number* and the *node name* with the appropriate values.
 
 This SSH session created tunnel from your computer to gra798. The tunnel will be active only while the session is running. Do not close this window and do not logout, this will close the tunnel and disconnect you from the notebook.
 
 Now in the browser on your local computer you can type localhost:8888, and enter the token when prompted.
 
 In Jupyter open new notebook. Ensure that you are creating notebook with the python kernel matching the active environment (env-pytraj), or kernel will fail to start!
+
+> #### Using MobaXterm (on Windows)
+>
+> Users of MobaXterm can use the "SSH Session" as usual to open the *first* terminal tab which they 
+> can use to start the interactive job (*salloc*) and the Jupyter server.
+>
+> To establish the SSH-tunnels with a *second* SSH-session, we want to first open a *Local terminal*:
+> ![MobaXterm: Button "Start local terminal"]({{ page.root }}/fig/mobaxterm_local_terminal.png)
+>
+> In the *local terminal* we then use the same `ssh` command as shown above to create the SSH-tunnel
+> ![SSH command in local terminal]({{ page.root }}/fig/mobaxterm_ssh_command.png)
+{: .callout}
 
 > #### Uninstalling virtual environment from Jupyter:
 >
@@ -159,4 +171,3 @@ In Jupyter open new notebook. Ensure that you are creating notebook with the pyt
 > ~~~
 > {: .bash}
 {: .callout}
-
