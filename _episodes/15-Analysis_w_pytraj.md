@@ -171,6 +171,8 @@ In Jupyter open new notebook. Ensure that you are creating notebook with the pyt
 ### Computing RMSD 
 We are now ready to use pytraj in Jupyter notebook. First load pytraj, numpy, and matplotlib modules. Then move into the directory where the input data files are located.
 
+[View Notebook]({{ repo_url }}/blob/{{ default_branch }}/code/Notebooks/pytraj_rmsd.ipynb)
+
 ~~~
 import pytraj as pt
 import numpy as np
