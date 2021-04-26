@@ -9,7 +9,6 @@ questions:
 - "How do I calculate dynamical properties from trajectory data?"
 - "How can I characterize motions of macromolecules?"
 objectives:
-- "Learn how to set up and use Jupyter notebook in CC environment."
 - "Learn how to use NGLView to visualize MD-trajectories."
 - "Learn how to calculate and plot RMSD"
 - "Learn how to perform Dynamic Cross Correlation Analysis"
