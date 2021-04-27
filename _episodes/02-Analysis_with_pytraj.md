@@ -17,7 +17,7 @@ keypoints:
 - "By keeping everything in one easy accessible place Jupyter notebooks greatly simplify the management and sharing of your work"
 ---
 
-## Computing RMSD 
+## Computing RMSD with pytraj
 We are now ready to use pytraj in Jupyter notebook. First load pytraj, numpy, and matplotlib modules. Then move into the directory where the input data files are located.
 
 [View Notebook]({{ site.repo_url }}/blob/{{ site.default_branch }}/code/Notebooks/pytraj_rmsd.ipynb)
@@ -27,47 +27,48 @@ import pytraj as pt
 import numpy as np
 from matplotlib import pyplot as plt
 
-%cd ~/scratch/Ago-RNA_sim/sim_pmemd/2-production/
+%cd ~/scratch/workshop/pdb/6N4O/simulation/sim_pmemd/4-production
 ~~~
 {: .python}
 
 Load the topology and the trajectory:
 
 ~~~
-traj=pt.iterload('mdcrd', top = 'prmtop.parm7')
+traj=pt.iterload('mdcrd_nowat.nc', top='prmtop_nowat.parm7') 
 ~~~
 {: .python}
 
-The `iterload` method can load multiple trajectories, supplied as a python list. You can also select slices from each of the trajectories, for example:
+- You can use a single filename, a list of filenames or a pattern. 
+- The *ptraj.iterload* method returns a frame iterator object. This means that it registers what trajectories will be processed without actually loading them into memory. One frame will be loaded at a time when needed at the time of processing. This saves memory and allows for anaysis of large trajectories. 
+- The *ptraj.load* method returns a trajectory object. In this case all trajectory frames are loaded into memory.
+- You can also select slices from each of the trajectories, for example:
 
 ~~~
-test=pt.iterload('mdcrd', top = 'prmtop.parm7', frame_slice=[(100, 110)]) 
+traj_slice=pt.iterload('mdcrd_nowat.nc', top='prmtop_nowat.parm7', frame_slice=[(100, 110)]) 
 ~~~
+{: .python}
 
-will load only frames from 100 to 110 from mdcrd.
+will load only frames from 100 to 110 from mdcrd_nowat.nc'.
+
+[View *ptraj.iterload* manual](https://amber-md.github.io/pytraj/latest/_api/pytraj.io.html#pytraj.io.iterload)
 
 Other ways to select frames and atoms:
-
 ~~~
-print(test)
-print(test[-1]) # last frame
-print(test[0:8])
-print(test[0:8:2])
-print(test[::2])
-print(test[0:8:2, ':U'])
-print(test[0:8:2, ':U@P'])
-traj[8:2:-2, '!:WAT']
-traj[8:2:-2, '!:WAT & !@H']
+print(traj[-1])    # The last frame
+print(traj[0:8])   # Frames 0 to 7
+print(traj[0:8:2]) # Frames 0 to 7 with stride 2
+print(traj[::2])   # All frames with stride 2
 ~~~
 {: .python}
 
-Load the reference frame
+To compute RMSD we need a reference structure. We will use the initial pdb file to see how different is our simulation from  the experimental structure. 
+- Load the reference frame
 ~~~
-ref_crd = pt.load('../../inpcrd.pdb')
+ref_coor = pt.load('inpcrd_nowat.pdb')
 ~~~
 {: .python}
 
-You can also use any trajectory frame, for example ref_crd = trj[0] as a reference structure.  
+- You can also use any trajectory frame, for example ref_crd = traj[0] as a reference structure.  
 
 Before computing RMSD automatically center and image molecules/residues/atoms that are outside of the box back into the box.
 
@@ -76,36 +77,42 @@ traj=traj.autoimage()
 ~~~
 {: .python}
 
-Generate X-axis for RMSD plot. The trajectory was saved every 0.001 ns.
+Generate time axis for RMSD plot. The trajectory was saved every 0.001 ns, and we have 2000 frames.
 ~~~
-tstep = 0.001 
-time = np.arange(0, traj.n_frames-1)*tstep
+time=np.linspace(0, 1.999, 2000)
 ~~~
 {: .python}
 
-We want to compute RMSD for protein backbone atoms. To select these atoms we need to know the index numbers of protein residues. Protein comes first in the system, and to find the number of the last residue we can grep C-terminal oxygen:
-
+Compute and plot RMSD of the protein backbone atoms.
+- We can compute and plot rmsd using the initial pdb file and a frame from the trajectory as reference structure.
 ~~~
-!grep OXT ../../inpcrd.pdb 
-~~~
-
-Finally compute and plot RMSD: 
-
-~~~
-rmsd_data = pt.rmsd(traj, ref = ref_crd, nofit = False, mask = ':1-859@C,N,O')
-plt.plot(time,rmsd_data)
+rmsd_ref = pt.rmsd(traj, ref=ref_coor, nofit=False, mask='@C,N,O')
+rmsd_first= pt.rmsd(traj, ref=traj[0], nofit=False, mask='@C,N,O')
+plt.plot(time,rmsd_ref)
+plt.plot(time,rmsd_first)
 plt.xlabel("Time, ns")
-plt.ylabel("RMSD, Angstrom")
+plt.ylabel("RMSD, $ \AA $")
 ~~~
 {: .python}
 
-#### Parallel trajectory analysis using MPI
+>## Exercise
+>1. Compute and plot RMSD of all nucleic acid atoms (residues U,A,G,C) excluding hydrogens for all frames.  
+>2. Compute and plot RMSD of all protein atoms excluding hydrogens for frames 1000-1999.  
+>3. Repeat using frome 500 as a reference.  
+>[View Atom selection syntax](https://amber-md.github.io/pytraj/latest/atom_mask_selection.html#atom-selections)
+{:.challenge}
+
+### Distributed parallel RMSD calculation with pytraj
 [View Notebook]({{ site.repo_url }}/blob/{{ site.default_branch }}/code/Notebooks/pytraj_rmsd_mpi.ipynb)
 
 ~~~
-%cd ~/scratch/Ago-RNA_sim/sim_pmemd/2-production/
+import pytraj as pt
 import numpy as np
+from matplotlib import pyplot as plt
+import seaborn as sns
 import pickle
+
+%cd ~/scratch/workshop/pdb/6N4O/simulation/sim_pmemd/4-production
 ~~~
 {: .python}
 
@@ -120,29 +127,30 @@ import pytraj as pt
 import pickle
 from mpi4py import MPI
 
+# initialize MPI 
 comm = MPI.COMM_WORLD
+
+# get the rank of the process
 rank = comm.rank
 
-# load data files
-traj = pt.iterload(['mdcrd'], top='prmtop.parm7')
-ref_crd = pt.load('../../inpcrd.pdb')
+# load the trajectory file
+traj=pt.iterload('mdcrd_nowat.nc', top='prmtop_nowat.parm7') 
+ref_coor = pt.load('inpcrd_nowat.pdb')
 
-# call pmap_mpi for MPI. We dont need to specify n_cores=x here since we will use srun.
+# call pmap_mpi function for MPI.
+# we dont need to specify the nuber of CPUs, 
+# because we will use srun to run the script
+data = pt.pmap_mpi(pt.rmsd, traj, mask='@C,N,O', ref=ref_coor)
 
-data = pt.pmap_mpi(pt.rmsd, traj, mask=':1-859,@C,N,O', ref=ref_crd)
-
-# computed RMSD data is sent to the master task (rank==0),
-# and saved in the file rmsd.dat 
+# pmap_mpi sends data to rank 0
+# rank 0 saves data 
 if rank == 0:
-    print(data)
     with open("rmsd.dat", "wb") as fp: 
          pickle.dump(data, fp)
 ~~~
 {: .python}
 
-
 Run the script on the cluster. We will take advantage of the resources we have already allocated with salloc command and simply use srun without requesting anything:   
-
 ~~~
 ! srun python rmsd.py
 ~~~
@@ -150,155 +158,161 @@ Run the script on the cluster. We will take advantage of the resources we have a
 
 In practice you will be submitting large analysis jobs to the queue with the sbatch command from a normal submission script requesting the desired number of MPI tasks (ntasks).
 
-
-When the job is done we import the results saved in the file rmsd.dat into python and plot RMSD as we have done above:
+When the job is done we import the results saved in the file rmsd.dat into python and generate time axis as we have done before:
 
 ~~~
 with open("rmsd.dat", "rb") as fp: 
     rmsd=pickle.load(fp)
 data=rmsd.get('RMSD_00001')
-tstep=0.001
-time=np.arange(0, len(data))*tstep
-
-plt.plot(time,data)
-plt.xlabel("Time, ns")
-plt.ylabel("RMSD, Angstrom")
+time=np.linspace(0,1.999,2000)
 ~~~
 {: .python}
 
+- Set *seaborn* plot theme parameters and plot the data
+~~~
+sns.set_theme()
+sns.set_style("darkgrid")
+plt.plot(time,rmsd)
+plt.xlabel("Time, ns")
+plt.ylabel("RMSD, $ \AA $")
+~~~
 
 ### Interactive trajectory visualization with NGLView
-
 Data Visualization is one of the essential skills required to conduct a successful research involving molecular dynamics simulations. It allows you (or other people in the team) to better understand the nature of a process you are studying, and it gives you the ability to convey the proper message to a general audience in a publication. 
-
 
 NGLView is a Jupyter widget for interactive viewing molecular structures and trajectories in notebooks. It runs in a browser and employs WebGL to display molecules like proteins and DNA/RNA with a variety of representations. It is also available as a standalone [Web application](http://nglviewer.org/ngl/).
 
 Open a new notebook. Import pytraj, nglview and make sure you are in the right directory    
-
 ~~~
 import pytraj as pt
 import nglview as nv
-%cd ~/scratch/Ago-RNA_sim/sim_pmemd/2-production/
+%cd ~/scratch/workshop/pdb/6N4O/simulation/sim_pmemd/4-production
 ~~~
 {: .python}   
 
 Load the trajectory:  
-
 ~~~
-traj = pt.iterload('mdcrd', top = 'prmtop.parm7')
+traj=pt.iterload('mdcrd_nowat.nc', top = 'prmtop_nowat.parm7')
 ~~~
 {: .python}
 
-Automatically center and image molecules/residues/atoms that are outside of the box back into the box.  
-
+Take care of the molecules that moved out of the initial box.  The `autoimage` function will automatically center and image molecules/residues/atoms that are outside of the box back into the initial box.
 ~~~
 traj = traj.autoimage()
 ~~~  
 {: .python}
 
-Strip water and ions
-
-~~~
-trj=traj.strip(':WAT, Na+, Cl-')
-~~~  
-{: .python}
-
 Create NGLview widget 
-
 ~~~
 view = nv.show_pytraj(trj)
 ~~~  
 {: .python}
 
-Delete the default representation
-
-~~~
-view.clear()
-~~~  
-{: .python}
-
-Add protein cartoon representation
-
-~~~
-view.add_cartoon('protein', colorScheme="residueindex", opacity=1.0)
-~~~  
-{: .python}
+- The default representation is ball and sticks
+- The defaults selection is all atoms
 
 Render the view. Try interacting with the viewer using [Mouse](http://nglviewer.org/ngl/api/manual/interaction-controls.html#mouse) and [Keyboard](http://nglviewer.org/ngl/api/manual/interaction-controls.html#keyboard) controls.
-
 ~~~
 view 
 ~~~  
 {: .python}
 
-Add more representations. You can find samples of all representations [here](http://proteinformatics.charite.de/ngl/doc/#User_manual/Usage/Molecular_representations). 
-
-Try using different [coloring schemes](https://nglviewer.org/ngl/api/manual/usage/coloring.html).  
-
-Try visualizing different  selections. Selection language is described [here](https://nglviewer.org/ngl/api/manual/usage/selection-language.html)
-
+Create second view and clear it
 ~~~
-view.add_licorice('protein', opacity=0.3)
-view.add_hyperball(':B and not hydrogen', colorScheme="element")
-view.add_hyperball(':C and not hydrogen', colorScheme="element")
-view.add_spacefill('MG',colorScheme='element')
+view2=nv.show_pytraj(traj)
+view2.clear()
+~~~
+{: .python}
+
+Add cartoon representation
+~~~
+view2.add_cartoon('protein', colorScheme="residueindex", opacity=1.0)
+~~~
+{: .python}
+
+- [Coloring schemes](https://nglviewer.org/ngl/api/manual/usage/coloring.html)
+
+Render the view.
+~~~
+view2 
 ~~~  
 {: .python}
 
-Change background color
+Change background color and projection
+~~~
+view2.background="black"
+view2.camera='orthographic'
+~~~  
+{: .python}
+
+Add more representations. You can find samples of all representations [here](http://proteinformatics.charite.de/ngl/doc/#User_manual/Usage/Molecular_representations). 
 
 ~~~
-view.background="black"
-~~~  
+view2.remove_cartoon()
+view2.add_hyperball(':B or :C and not hydrogen', colorScheme="element")
+~~~
 {: .python}
 
 Change animation speed and step
-
 ~~~
-view.player.parameters = dict(delay=0.5, step=1)
-~~~  
-{: .python}
-
-Try changing display projection
-
-~~~
-view.camera='orthographic'
+view2.player.parameters = dict(delay=0.5, step=1)
 ~~~  
 {: .python}
 
 Make animation smoother
-
 ~~~
 view.player.interpolate = True
 ~~~  
 {: .python}
 
+Try visualizing different atom selections. Selection language is described [here](https://nglviewer.org/ngl/api/manual/usage/selection-language.html)
+
+- You can use GUI
+~~~
+view4=nv.show_pytraj(traj)
+view4.display(gui=True)
+~~~
+{: .python}
+- Use filter to select atoms  
+- Create nucleic representation
+- Use hamburger menu to change representation properties 
+- Change `surfaceType` to av
+- Use `colorValue` to change color
+- Check wireframe box
+- Try full screen
+- Add nucleic representation hyperball
+
 Set size of the widget programmatically
-
 ~~~
-view._remote_call('setSize', target='Widget', args=['700px', '400px'])
+view3=nv.show_pytraj(traj)
+view3._remote_call('setSize', target='Widget', args=['700px', '440px'])
 ~~~  
 {: .python}
 
-Remove cartoon representation
-
 ~~~
-view.remove_cartoon()
+view3
+view3.clear()
+~~~
+{: .python}
+
+- Add representations
+~~~
+view3.add_ball_and_stick('protein', opacity=0.3, color='grey')
+view3.add_hyperball(':B or :C and not hydrogen', colorScheme="element")
+view3.add_tube(':B or :C and not hydrogen')
+view3.add_spacefill('MG',colorScheme='element')
 ~~~  
 {: .python}
 
-Select all residues within a distance of residue 10
-
+Try changing display projection
 ~~~
-trj=traj[:10<:5]
-~~~
+view3.camera='orthographic'
+~~~  
 {: .python}
 
-Turn on GUI
-
+Select all residues within a distance 5 Angstrom of residue 10
 ~~~
-view.display(gui=True)
+traj=traj[:10<:5]
 ~~~
 {: .python}
 

@@ -111,41 +111,38 @@ salloc --mem-per-cpu=2000 --time=2:0:0 --ntasks=2
 Wait for the allocation to complete. When it's done you will see that the command prompt changed:
 
 ~~~
-salloc: Pending job allocation 44825307
-salloc: job 44825307 queued and waiting for resources
-salloc: job 44825307 has been allocated resources
-salloc: Granted job allocation 44825307
+[user45@login1 ~]$ salloc -c4 --mem-per-cpu=1000 --time=10:0:0
+salloc: Granted job allocation 168
 salloc: Waiting for resource configuration
-salloc: Nodes gra798 are ready for job
-[svassili@gra798 ~]$ 
+salloc: Nodes node1 are ready for job
+[user45@node1 ~]$  
 ~~~
 {:.output}
 
-In this example salloc allocated the resources and logged you into the compute node gra798. Note the name of the node where notebook server will be running. Now we can start Jupyter server by executing commands from the file *jupyter_launch_ambertools.sh*
+In this example salloc allocated the resources and logged you into the compute node node1. Note the name of the node where notebook server will be running. Now we can start Jupyter server by executing commands from the file *jupyter_launch_ambertools.sh*
 
 ~~~
 bash ./jupyter_launch_ambertools.sh
 ~~~
 {: .bash}
 
-Do not close this window, closing it will terminate the server. Note the port number (the default is 8888, but if you unintentionally start a second server, port number will be incremented). Note the notebook access token, you will need it to connect to the Jupyter notebook.
+Do not close this window, closing it will terminate the server. Note the port number (the default is 8888, but if you or another user start a second server, port number will be incremented). Note the notebook access token, you will need it to connect to the Jupyter notebook.
 
 ### Connecting to Jupyter server
 
-The message in the example above informs that notebook server is listening at port 8888 of the node gra798. Compute nodes cannot be accessed directly from the Internet, but we can connect to the login node, and the login node can connect any compute node. Thus, connection to a compute node should be also possible. How do we connect to the node gra798 at port 8888? We can instruct ssh client program to map port 8888 of gra798 to our local computer. This type of connection is called "ssh tunneling" or "ssh port forwarding". Ssh tunneling allows transporting networking data between computers over an encrypted SSH connection.
-
+The message in the example above informs that notebook server is listening at port 8888 of the node node1. Compute nodes cannot be accessed directly from the Internet, but we can connect to the login node, and the login node can connect any compute node. Thus, connection to a compute node should be also possible. How do we connect to the node node1 at port 8888? We can instruct ssh client program to map port 8888 of node1 to our local computer. This type of connection is called "ssh tunneling" or "ssh port forwarding". Ssh tunneling allows transporting networking data between computers over an encrypted SSH connection.
 
 ![schematic of two SSH-tunnels]({{ page.root }}/fig/ssh_tunnel.svg)
 
 Open **another** terminal tab or window and run the command:
 ~~~
-ssh svassili@graham.computecanada.ca -L 8888:gra798:8888
+ssh user45@moledyn.ace-net.training -L 8888:node1:8888
 ~~~
 {: .bash}
 
 Replace the *port number* and the *node name* with the appropriate values.
 
-This SSH session created tunnel from your computer to gra798. The tunnel will be active only while the session is running. Do not close this window and do not logout, this will close the tunnel and disconnect you from the notebook.
+This SSH session created tunnel from your computer to node1. The tunnel will be active only while the session is running. Do not close this window and do not logout, this will close the tunnel and disconnect you from the notebook.
 
 Now in the browser on your local computer you can type localhost:8888, and enter the token when prompted.
 
