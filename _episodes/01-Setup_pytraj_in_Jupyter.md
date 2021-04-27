@@ -25,17 +25,17 @@ References:
 ## Using PYTRAJ in Jupyter notebook
 The use of Jupyter notebook becomes increasingly popular for data analysis and visualization. One of the most attractive features of Jupyter is how well it combines different medium (your code, notes, and visualizations) in one solution. By keeping everything in one easy accessible place notebooks greatly simplify the management and sharing of your work.
 
-Before going into details of MD analysis with PYTRAJ we need to create a python virtual environment. A virtual environment is a framework for management of multiple isolated Python environments. We use it on CC systems for installation of python packages in user accounts.
+Before going into details of MD analysis with PYTRAJ we need to create a Python virtual environment. A virtual environment is a framework for management of multiple isolated Python environments. We use it on CC systems for installation of Python packages in user accounts.
 
 ### Installing Python Virtual Environment and Jupyter Notebook.
-In this lesson we will be using PYTRAJ with AmberTools20. To start using these tools first you need to load modules required for AmberTools. Then load python and scipy-stack modules:
+In this lesson we will be using PYTRAJ with AmberTools20. To start using these tools first you need to load modules required for AmberTools. Then load `python` and `scipy-stack modules`:
 
 ~~~
 module load StdEnv/2020 gcc/9.3.0 openmpi/4.0.3 python scipy-stack
 ~~~
 {: .bash}
 
-The next step is to install and activate a virtual environment. We need a virtual environment because we will be installing python modules required for this lesson and virtual environment is the best way to install and manage python modules on CC systems.
+The next step is to install and activate a virtual environment. We need a virtual environment because we will be installing Python modules required for this lesson and virtual environment is the best way to install and manage Python modules on CC systems.
 
 ~~~
 virtualenv ~/env-pytraj
@@ -43,14 +43,14 @@ source ~/env-pytraj/bin/activate
 ~~~
 {: .bash}
 
-Once a virtual environment is installed and activated we can install Jupyter Notebook server. We begin installation by installing IPython kernel, the python backend for Jupyter Notebook. Kernel is a process that runs independently and interacts with the Jupyter Notebook server and its user interface. The Jupyter Notebook automatically ensures that the IPython kernel is available in the default environment. However, as we will be using Python in a specific virtual environment set up for using AmberTools, we need to install IPython kernel into the newly created environment. 
+Once a virtual environment is installed and activated we can install Jupyter Notebook server. We begin installation by installing IPython kernel, the Python backend for Jupyter Notebook. Kernel is a process that runs independently and interacts with the Jupyter Notebook server and its user interface. The Jupyter Notebook automatically ensures that the IPython kernel is available in the default environment. However, as we will be using Python in a specific virtual environment set up for using AmberTools, we need to install IPython kernel into the newly created environment. 
 
 ~~~
 pip install --no-index jupyter ipykernel
 ~~~
 {: .bash}
 
-To make the environment *env-pytraj* accessible from notebook we need one more step: add the kernel specification for the new python to Jupyter. You can use any name for the kernel, for example 'env-pytraj'.
+To make the environment *env-pytraj* accessible from notebook we need one more step: add the kernel specification for the new Python to Jupyter. You can use any name for the kernel, for example 'env-pytraj'.
 
 ~~~
 python -m ipykernel install --user --name=env-pytraj
@@ -58,9 +58,9 @@ python -m ipykernel install --user --name=env-pytraj
 {: .bash} 
 
 Finally, install three more packages that we will be using: 
-1. NGLview, a Jupyter widget for molecular visualization.
-2. Pickle, a module providing functions for serialization of python objects (conversion into a byte stream). Objects need to be serialized for storage on a hard disk and loading back into python. 
-3. Seaborn, a Python data visualization library extending a popular matplotlib. It provides a high-level interface for drawing, templates for attractive and informative statistical graphics.
+1. **NGLview**, a Jupyter widget for molecular visualization.
+2. **Pickle**, a module providing functions for serialization of Python objects (conversion into a byte stream). Objects need to be serialized for storage on a hard disk and loading back into Python. 
+3. **Seaborn**, a Python data visualization library extending a popular *matplotlib*. It provides a high-level interface for drawing, templates for attractive and informative statistical graphics.
 
 ~~~
 pip install nglview pickle5 seaborn 
@@ -75,7 +75,7 @@ jupyter-nbextension enable widgetsnbextension --py --sys-prefix
 ~~~
 {: .bash}
 
-The *nglview* python module provides NGLview Jupyter extension. We don't need to install it, but we need to enable it before it can be used:
+The *nglview* Python module provides NGLview Jupyter extension. We don't need to install it, but we need to enable it before it can be used:
 ~~~
 jupyter-nbextension enable nglview --py --sys-prefix
 ~~~
@@ -84,9 +84,9 @@ jupyter-nbextension enable nglview --py --sys-prefix
 We are now ready to start Jupyter notebook server. The new Python kernel with the name `env-pytraj` will be available for notebooks.
 
 ### Launching Jupyter notebook server
-This example is for launching Jupyter on Graham. Procedure is the same on all other systems. the only difference is the name of the login and compute nodes. 
+This example is for launching Jupyter on the training cluster. Procedure is the same on all other Compute Canada systems. the only difference is the name of the login and compute nodes. 
 
-To make AmberTools available in a notebook we need to load ambertools module and activate the virtual environment before starting Jupyter server. As launching a server involves a sequence of several commands, it is convenient to save all commands in a file. You can later simply execute commands from this file (we call this "source file") instead of typing commands every time.
+To make AmberTools available in a notebook we need to load the `ambertools` module and activate the virtual environment before starting Jupyter server. As launching a server involves a sequence of several commands, it is convenient to save all commands in a file. You can later simply execute commands from this file (we call this "source file") instead of typing commands every time.
 
 Let's create Jupyter startup file for use with AmberTools module, *jupyter_launch_ambertools.sh*, with the following content: 
 
@@ -100,7 +100,7 @@ jupyter notebook --ip $(hostname -f) --no-browser
 ~~~
 {: .file-content}
 
-Before starting jupyter server we need to allocate CPUs and RAM for our notebook. Let's request two MPI tasks because we will learn to how to analyze data in parallel. Submit request of an interactive resource allocation using the *salloc* command:
+Before starting Jupyter server we need to allocate CPUs and RAM for our notebook. Let's request two MPI tasks because we will learn to how to analyze data in parallel. Submit request of an interactive resource allocation using the *salloc* command:
 
 ~~~
 salloc --mem-per-cpu=2000 --time=2:0:0 --ntasks=2
@@ -125,7 +125,7 @@ bash ./jupyter_launch_ambertools.sh
 ~~~
 {: .bash}
 
-Do not close this window, closing it will terminate the server. Note the port number (the default is 8888, but if you or another user start a second server, port number will be incremented). Note the notebook access token, you will need it to connect to the Jupyter notebook.
+**Do not close this window**, closing it will terminate the server. Note the **port number** (the default is 8888, but if you or another user start a second server, port number will be incremented). Note the **notebook access token**, you will need it to connect to the Jupyter notebook.
 
 ### Connecting to Jupyter server
 
