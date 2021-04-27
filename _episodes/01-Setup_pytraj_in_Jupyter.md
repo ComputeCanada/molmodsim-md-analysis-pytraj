@@ -151,7 +151,7 @@ Now in the browser on your local computer you can type localhost:8888, and enter
 
 In Jupyter open new notebook. Ensure that you are creating notebook with the python kernel matching the active environment (env-pytraj), or kernel will fail to start!
 
-> #### Using MobaXterm (on Windows)
+> ## Using MobaXterm (on Windows)
 >
 > Users of MobaXterm can use the "SSH Session" as usual to open the *first* terminal tab which they 
 > can use to start the interactive job (*salloc*) and the Jupyter server.
@@ -163,7 +163,7 @@ In Jupyter open new notebook. Ensure that you are creating notebook with the pyt
 > ![SSH command in local terminal]({{ page.root }}/fig/mobaxterm_ssh_command.png)
 {: .callout}
 
-> #### Uninstalling virtual environment from Jupyter:
+> ## Uninstalling virtual environment from Jupyter:
 >
 > ~~~
 > jupyter kernelspec list

@@ -99,12 +99,8 @@ plt.ylabel("RMSD, Angstrom")
 ~~~
 {: .python}
 
-<<<<<<< HEAD
-### Parallel trajectory analysis using MPI
-=======
 #### Parallel trajectory analysis using MPI
 [View Notebook]({{ site.repo_url }}/blob/{{ site.default_branch }}/code/Notebooks/pytraj_rmsd_mpi.ipynb)
->>>>>>> e26dc0c42815518fbc7ed876c289d318c2704dd1
 
 ~~~
 %cd ~/scratch/Ago-RNA_sim/sim_pmemd/2-production/
@@ -329,10 +325,31 @@ view.display(gui=True)
 
 
 ### Principal component analysis
-Nucleic backbone: :@O3',C3',C4',C5',O5',P
+One way to think of Principal Components is that they are a means of explaining variance in the data. PCA performed on MD trajectories decomposes very complex molecular motion into a set of orthogonal components. Algorithmically PCA performs a linear transformation that diagonalizes the covariance matrix and thus it removes the instantaneous linear correlations among the fluctuations of atomic coordinates. Principal Components are sorted by their contribution to the overall fluctuations. The first PC describes the largest variance in the data, the second PC shows the second largest and so on. PCA is useful for gaining insight into the dynamics of a system. It has been shown that a dominant motion of the system can be described by just a few largest principal components. 
 
+The input to PCA is the coordinate covariance matrix calculated from the molecular dynamics trajectory. The trajectory for PCA is prepared by RMS fitting of the coordinate to a reference frame to eliminate global translational and rotational motions. Then the coordinate covariance matrix (the matrix of deviations from average structure) is computed. Once the matrix is computed, PCs are obtained by diagonalizing it. The diagonalization procedure yield the eigenvectors (we call them the PCs) and the eigenvalues (the contribution of each PC to the total fluctuations). Once the PCs are found we can project the trajectory coordinates on the principal components. By trajectory here we mean the transformed trajectory where coordinates are deviations of each atom form its average position.  Projection of the trajectory on PCs will yield a pseudo-trajectories of motion along each principal component which can be visualized with VMD.
+
+Overall PCA is quite complex procedure involving many steps. All necessary PCA steps are carried out automatically by the *pca* module of *ptraj*.
+
+[View Notebook]({{ site.repo_url }}/blob/{{ site.default_branch }}/code/Notebooks/pytraj_pca.ipynb)
+
+#### Visualizing normal modes with VMD plugin Normal Mode Wizard
+
+Download the file "modes.nmd"
+~~~
+scp user45@moledyn.ace-net.training:scratch/workshop/pdb/6N4O/simulation/sim_pmemd/4-production/modes.nmd .
+~~~
+{:.bash}
+
+- Open VMD
+- Go to `Extensions` -> `Analysis` -> `Normal Mode Wizard` -> `Load NMD File`
+- Navigate to the file `modes.nmd`
+- In the popup window `NMWiz - PCA models` chose the `Active mode` and press `Animation` - `Make` box.
 
 ### Cross-correlation analysis.
+Collective motions of atoms in proteins are crucial for the biological function. Collective motions are difficult to observe experimentally, but molecular dynamics trajectories can provide this information. The dynamic correlation between all atoms within the system can be obtained by analyzing atomic motions in the simulation. 
+
+The pytraj dynamic cross-correlation module *atomiccorr* computes a matrix of atom-wise cross-correlation coefficients. Each matrix element describes the degree to which a pair of atoms i and j move together. The correlation values lie between -1 and 1, where 1 describes full correlation, and -1 corresponds to anti-correlation.
 
 [View Notebook]({{ site.repo_url }}/blob/{{ site.default_branch }}/code/Notebooks/pytraj_xcorr.ipynb)
 
