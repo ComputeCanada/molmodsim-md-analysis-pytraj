@@ -172,7 +172,7 @@ In Jupyter open new notebook. Ensure that you are creating notebook with the pyt
 
 We are now ready to use pytraj in Jupyter notebook.  Let's plot energies from the simulation logs of our equilibration runs. 
 
-First load pandas, and matplotlib modules. Then move into the directory where the input data files are located.
+First load `pandas`, and `matplotlib` modules. Then move into the directory where the input data files are located.
 
 ~~~
 import pandas as pd

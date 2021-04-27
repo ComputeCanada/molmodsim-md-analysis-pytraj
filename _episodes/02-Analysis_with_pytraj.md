@@ -39,7 +39,7 @@ traj=pt.iterload('mdcrd_nowat.nc', top='prmtop_nowat.parm7')
 {: .python}
 
 - You can use a single filename, a list of filenames or a pattern. 
-- The *ptraj.iterload* method returns a frame iterator object. This means that it registers what trajectories will be processed without actually loading them into memory. One frame will be loaded at a time when needed at the time of processing. This saves memory and allows for anaysis of large trajectories. 
+- The *ptraj.iterload* method returns a frame iterator object. This means that it registers what trajectories will be processed without actually loading them into memory. One frame will be loaded at a time when needed at the time of processing. This saves memory and allows for analysis of large trajectories. 
 - The *ptraj.load* method returns a trajectory object. In this case all trajectory frames are loaded into memory.
 - You can also select slices from each of the trajectories, for example:
 
@@ -48,7 +48,7 @@ traj_slice=pt.iterload('mdcrd_nowat.nc', top='prmtop_nowat.parm7', frame_slice=[
 ~~~
 {: .python}
 
-will load only frames from 100 to 110 from mdcrd_nowat.nc'.
+will load only frames from 100 to 110 from `mdcrd_nowat.nc`.
 
 [View *ptraj.iterload* manual](https://amber-md.github.io/pytraj/latest/_api/pytraj.io.html#pytraj.io.iterload)
 
@@ -99,7 +99,7 @@ plt.show()
 >## Exercise
 >1. Compute and plot RMSD of all nucleic acid atoms (residues U,A,G,C) excluding hydrogens for all frames.  
 >2. Compute and plot RMSD of all protein atoms excluding hydrogens for frames 1000-1999.  
->3. Repeat using frome 500 as a reference.  
+>3. Repeat using coordinates from frame 500 as a reference.  
 >[View Atom selection syntax](https://amber-md.github.io/pytraj/latest/atom_mask_selection.html#atom-selections)
 >
 >> ## Solution
@@ -132,9 +132,9 @@ import pickle
 ~~~
 {: .python}
 
-To process trajectory in parallel we need to create a python script file rmsd.py instead of entering commands in the notebook.  This script when executed with srun will use all available MPI tasks. Each task will process its share of frames and send the result to the master task. The master task will "pickle" the computed rmsd data and save it as a python object.   
+To process trajectory in parallel we need to create a Python script file `rmsd.py` instead of entering commands in the notebook.  This script when executed with `srun` will use all available MPI tasks. Each task will process its share of frames and send the result to the master task. The master task will "pickle" the computed rmsd data and save it as a Python object.   
 
-To create the python script directly from the notebook we will use Jupyter magic command %%file.  
+To create the Python script directly from the notebook we will use Jupyter magic command %%file.  
 
 ~~~
 %%file rmsd.py
@@ -154,7 +154,7 @@ traj=pt.iterload('mdcrd_nowat.nc', top='prmtop_nowat.parm7')
 ref_coor = pt.load('inpcrd_nowat.pdb')
 
 # call pmap_mpi function for MPI.
-# we dont need to specify the nuber of CPUs, 
+# we don't need to specify the number of CPUs, 
 # because we will use srun to run the script
 data = pt.pmap_mpi(pt.rmsd, traj, mask='@C,N,O', ref=ref_coor)
 
@@ -166,15 +166,15 @@ if rank == 0:
 ~~~
 {: .python}
 
-Run the script on the cluster. We will take advantage of the resources we have already allocated with salloc command and simply use srun without requesting anything:   
+Run the script on the cluster. We will take advantage of the resources we have already allocated with `salloc` command and simply use `srun` without requesting anything:   
 ~~~
 ! srun python rmsd.py
 ~~~
 {: .python}
 
-In practice you will be submitting large analysis jobs to the queue with the sbatch command from a normal submission script requesting the desired number of MPI tasks (ntasks).
+In practice you will be submitting large analysis jobs to the queue with the `sbatch` command from a normal submission script requesting the desired number of MPI tasks (ntasks).
 
-When the job is done we import the results saved in the file rmsd.dat into python and generate time axis as we have done before:
+When the job is done we import the results saved in the file `rmsd.dat` into Python and generate time axis as we have done before:
 
 ~~~
 with open("rmsd.dat", "rb") as fp: 
@@ -355,7 +355,7 @@ traj=traj[:10<:5]
 
 
 ### Principal component analysis
-One way to think of Principal Components is that they are a means of explaining variance in the data. PCA performed on MD trajectories decomposes very complex molecular motion into a set of orthogonal components. Algorithmically PCA performs a linear transformation that diagonalizes the covariance matrix and thus it removes the instantaneous linear correlations among the fluctuations of atomic coordinates. Principal Components are sorted by their contribution to the overall fluctuations. The first PC describes the largest variance in the data, the second PC shows the second largest and so on. PCA is useful for gaining insight into the dynamics of a system. It has been shown that a dominant motion of the system can be described by just a few largest principal components. 
+One way to think of Principal Components is that they are a means of explaining variance in the data. PCA performed on MD trajectories decomposes very complex molecular motion into a set of orthogonal components. Algorithmically, PCA performs a linear transformation that diagonalizes the covariance matrix and thus it removes the instantaneous linear correlations among the fluctuations of atomic coordinates. Principal Components are sorted by their contribution to the overall fluctuations. The first PC describes the largest variance in the data, the second PC shows the second largest and so on. PCA is useful for gaining insight into the dynamics of a system. It has been shown that a dominant motion of the system can be described by just a few largest principal components. 
 
 The input to PCA is the coordinate covariance matrix calculated from the molecular dynamics trajectory. The trajectory for PCA is prepared by RMS fitting of the coordinate to a reference frame to eliminate global translational and rotational motions. Then the coordinate covariance matrix (the matrix of deviations from average structure) is computed. Once the matrix is computed, PCs are obtained by diagonalizing it. The diagonalization procedure yield the eigenvectors (we call them the PCs) and the eigenvalues (the contribution of each PC to the total fluctuations). Once the PCs are found we can project the trajectory coordinates on the principal components. By trajectory here we mean the transformed trajectory where coordinates are deviations of each atom form its average position.  Projection of the trajectory on PCs will yield a pseudo-trajectories of motion along each principal component which can be visualized with VMD.
 
