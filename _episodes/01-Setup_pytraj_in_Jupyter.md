@@ -23,7 +23,6 @@ References:
 
 
 ## Using PYTRAJ in Jupyter notebook
-
 The use of Jupyter notebook becomes increasingly popular for data analysis and visualization. One of the most attractive features of Jupyter is how well it combines different medium (your code, notes, and visualizations) in one solution. By keeping everything in one easy accessible place notebooks greatly simplify the management and sharing of your work.
 
 Before going into details of MD analysis with PYTRAJ we need to create a python virtual environment. A virtual environment is a framework for management of multiple isolated Python environments. We use it on CC systems for installation of python packages in user accounts.
@@ -168,3 +167,46 @@ In Jupyter open new notebook. Ensure that you are creating notebook with the pyt
 > ~~~
 > {: .bash}
 {: .callout}
+
+### Plotting energy components
+
+We are now ready to use pytraj in Jupyter notebook.  Let's plot energies from the simulation logs of our equilibration runs. 
+
+First load pandas, and matplotlib modules. Then move into the directory where the input data files are located.
+
+~~~
+import pandas as pd
+import matplotlib.pyplot as plt
+
+%cd ~/scratch/workshop/pdb/1RGG/AMBER/3_equilibration/
+~~~
+{:.python}
+
+~~~
+! extract_energies.sh equilibration_1.log
+~~~
+{:.bash}
+
+File *extract_energies.sh* 
+
+~~~
+#!/bin/bash
+echo "Usage: extract_energies simulation_log_file" 
+
+log=$1
+cpptraj << EOF
+readdata $log
+writedata energy.dat $log[Etot] $log[TEMP] $log[PRESS] $log[VOLUME] time 0.1
+EOF
+~~~
+{:.file-content}
+
+~~~
+df = pd.read_table('energy.dat', delim_whitespace=True)
+df.columns=["Time", "Etot", "Temp", "Press", "Volume"]
+
+df.plot(subplots=True, x="Time", figsize=(6, 8))
+plt.legend(loc='best')
+plt.show()
+~~~
+{:.python}
