@@ -168,7 +168,7 @@ In Jupyter open new notebook. Ensure that you are creating notebook with the pyt
 > {: .bash}
 {: .callout}
 
-### Plotting energy components
+### Plotting energy components from simulation logs
 
 We are now ready to use pytraj in Jupyter notebook.  Let's plot energies from the simulation logs of our equilibration runs. 
 
@@ -192,8 +192,8 @@ File *extract_energies.sh*
 ~~~
 #!/bin/bash
 echo "Usage: extract_energies simulation_log_file" 
-
 log=$1
+
 cpptraj << EOF
 readdata $log
 writedata energy.dat $log[Etot] $log[TEMP] $log[PRESS] $log[VOLUME] time 0.1
@@ -202,11 +202,9 @@ EOF
 {:.file-content}
 
 ~~~
-df = pd.read_table('energy.dat', delim_whitespace=True)
+df=pd.read_table('energy.dat', delim_whitespace=True)
 df.columns=["Time", "Etot", "Temp", "Press", "Volume"]
-
-df.plot(subplots=True, x="Time", figsize=(6, 8))
-plt.legend(loc='best')
+df.plot(subplots=True, x="Time", xlabel="Time, ps", figsize=(6, 8))
 plt.show()
 ~~~
 {:.python}

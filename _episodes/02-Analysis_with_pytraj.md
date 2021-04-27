@@ -92,6 +92,7 @@ plt.plot(time,rmsd_ref)
 plt.plot(time,rmsd_first)
 plt.xlabel("Time, ns")
 plt.ylabel("RMSD, $ \AA $")
+plt.show()
 ~~~
 {: .python}
 
@@ -100,7 +101,22 @@ plt.ylabel("RMSD, $ \AA $")
 >2. Compute and plot RMSD of all protein atoms excluding hydrogens for frames 1000-1999.  
 >3. Repeat using frome 500 as a reference.  
 >[View Atom selection syntax](https://amber-md.github.io/pytraj/latest/atom_mask_selection.html#atom-selections)
+>
+>> ## Solution
+>>
+>>~~~
+>>traj=pt.iterload('mdcrd_nowat.nc', top='prmtop_nowat.parm7')
+>>rmsd_ref = pt.rmsd(traj, ref=ref_coor, nofit=False, mask='(:U,A,G,C)&!(@H=)')
+>>
+>>rmsd_ref = pt.rmsd(traj[1000:2000], ref=ref_coor, nofit=False, mask='(:1-859)&!(@H=)')
+>>time=np.linspace(1.0, 2.0, 1000)
+>>
+>>~~~
+>>{:.python}
+>{:.solution}
 {:.challenge}
+
+
 
 ### Distributed parallel RMSD calculation with pytraj
 [View Notebook]({{ site.repo_url }}/blob/{{ site.default_branch }}/code/Notebooks/pytraj_rmsd_mpi.ipynb)
