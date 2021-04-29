@@ -29,14 +29,14 @@ from matplotlib import pyplot as plt
 
 %cd ~/scratch/workshop/pdb/6N4O/simulation/sim_pmemd/4-production
 ~~~
-{: .python}
+{: .language-python}
 
 Load the topology and the trajectory:
 
 ~~~
 traj=pt.iterload('mdcrd_nowat.nc', top='prmtop_nowat.parm7') 
 ~~~
-{: .python}
+{: .language-python}
 
 - You can use a single filename, a list of filenames or a pattern. 
 - The *ptraj.iterload* method returns a frame iterator object. This means that it registers what trajectories will be processed without actually loading them into memory. One frame will be loaded at a time when needed at the time of processing. This saves memory and allows for analysis of large trajectories. 
@@ -46,7 +46,7 @@ traj=pt.iterload('mdcrd_nowat.nc', top='prmtop_nowat.parm7')
 ~~~
 traj_slice=pt.iterload('mdcrd_nowat.nc', top='prmtop_nowat.parm7', frame_slice=[(100, 110)]) 
 ~~~
-{: .python}
+{: .language-python}
 
 will load only frames from 100 to 110 from `mdcrd_nowat.nc`.
 
@@ -59,14 +59,14 @@ print(traj[0:8])   # Frames 0 to 7
 print(traj[0:8:2]) # Frames 0 to 7 with stride 2
 print(traj[::2])   # All frames with stride 2
 ~~~
-{: .python}
+{: .language-python}
 
 To compute RMSD we need a reference structure. We will use the initial pdb file to see how different is our simulation from  the experimental structure. 
 - Load the reference frame
 ~~~
 ref_coor = pt.load('inpcrd_nowat.pdb')
 ~~~
-{: .python}
+{: .language-python}
 
 - You can also use any trajectory frame, for example ref_crd = traj[0] as a reference structure.  
 
@@ -75,13 +75,13 @@ Before computing RMSD automatically center and image molecules/residues/atoms th
 ~~~
 traj=traj.autoimage()
 ~~~
-{: .python}
+{: .language-python}
 
 Generate time axis for RMSD plot. The trajectory was saved every 0.001 ns, and we have 2000 frames.
 ~~~
 time=np.linspace(0, 1.999, 2000)
 ~~~
-{: .python}
+{: .language-python}
 
 Compute and plot RMSD of the protein backbone atoms.
 - We can compute and plot rmsd using the initial pdb file and a frame from the trajectory as reference structure.
@@ -94,7 +94,7 @@ plt.xlabel("Time, ns")
 plt.ylabel("RMSD, $ \AA $")
 plt.show()
 ~~~
-{: .python}
+{: .language-python}
 
 >## Exercise
 >1. Compute and plot RMSD of all nucleic acid atoms (residues U,A,G,C) excluding hydrogens for all frames.  
@@ -112,7 +112,7 @@ plt.show()
 >>time=np.linspace(1.0, 2.0, 1000)
 >>
 >>~~~
->>{:.python}
+>>{: .language-python}
 >{:.solution}
 {:.challenge}
 
@@ -130,7 +130,7 @@ import pickle
 
 %cd ~/scratch/workshop/pdb/6N4O/simulation/sim_pmemd/4-production
 ~~~
-{: .python}
+{: .language-python}
 
 To process trajectory in parallel we need to create a Python script file `rmsd.py` instead of entering commands in the notebook.  This script when executed with `srun` will use all available MPI tasks. Each task will process its share of frames and send the result to the master task. The master task will "pickle" the computed rmsd data and save it as a Python object.   
 
@@ -164,13 +164,13 @@ if rank == 0:
     with open("rmsd.dat", "wb") as fp: 
          pickle.dump(data, fp)
 ~~~
-{: .python}
+{: .language-python}
 
 Run the script on the cluster. We will take advantage of the resources we have already allocated with `salloc` command and simply use `srun` without requesting anything:   
 ~~~
 ! srun python rmsd.py
 ~~~
-{: .python}
+{: .language-python}
 
 In practice you will be submitting large analysis jobs to the queue with the `sbatch` command from a normal submission script requesting the desired number of MPI tasks (ntasks).
 
@@ -182,7 +182,7 @@ with open("rmsd.dat", "rb") as fp:
 data=rmsd.get('RMSD_00001')
 time=np.linspace(0,1.999,2000)
 ~~~
-{: .python}
+{: .language-python}
 
 - Set *seaborn* plot theme parameters and plot the data
 ~~~
@@ -204,25 +204,25 @@ import pytraj as pt
 import nglview as nv
 %cd ~/scratch/workshop/pdb/6N4O/simulation/sim_pmemd/4-production
 ~~~
-{: .python}   
+{: .language-python}   
 
 Load the trajectory:  
 ~~~
 traj=pt.iterload('mdcrd_nowat.nc', top = 'prmtop_nowat.parm7')
 ~~~
-{: .python}
+{: .language-python}
 
 Take care of the molecules that moved out of the initial box.  The `autoimage` function will automatically center and image molecules/residues/atoms that are outside of the box back into the initial box.
 ~~~
 traj = traj.autoimage()
 ~~~  
-{: .python}
+{: .language-python}
 
 Create NGLview widget 
 ~~~
 view = nv.show_pytraj(trj)
 ~~~  
-{: .python}
+{: .language-python}
 
 - The default representation is ball and sticks
 - The defaults selection is all atoms
@@ -231,20 +231,20 @@ Render the view. Try interacting with the viewer using [Mouse](http://nglviewer.
 ~~~
 view 
 ~~~  
-{: .python}
+{: .language-python}
 
 Create second view and clear it
 ~~~
 view2=nv.show_pytraj(traj)
 view2.clear()
 ~~~
-{: .python}
+{: .language-python}
 
 Add cartoon representation
 ~~~
 view2.add_cartoon('protein', colorScheme="residueindex", opacity=1.0)
 ~~~
-{: .python}
+{: .language-python}
 
 - [Coloring schemes](https://nglviewer.org/ngl/api/manual/usage/coloring.html)
 
@@ -252,14 +252,14 @@ Render the view.
 ~~~
 view2 
 ~~~  
-{: .python}
+{: .language-python}
 
 Change background color and projection
 ~~~
 view2.background="black"
 view2.camera='orthographic'
 ~~~  
-{: .python}
+{: .language-python}
 
 Add more representations. You can find samples of all representations [here](http://proteinformatics.charite.de/ngl/doc/#User_manual/Usage/Molecular_representations). 
 
@@ -267,19 +267,19 @@ Add more representations. You can find samples of all representations [here](htt
 view2.remove_cartoon()
 view2.add_hyperball(':B or :C and not hydrogen', colorScheme="element")
 ~~~
-{: .python}
+{: .language-python}
 
 Change animation speed and step
 ~~~
 view2.player.parameters = dict(delay=0.5, step=1)
 ~~~  
-{: .python}
+{: .language-python}
 
 Make animation smoother
 ~~~
 view.player.interpolate = True
 ~~~  
-{: .python}
+{: .language-python}
 
 Try visualizing different atom selections. Selection language is described [here](https://nglviewer.org/ngl/api/manual/usage/selection-language.html)
 
@@ -288,7 +288,7 @@ Try visualizing different atom selections. Selection language is described [here
 view4=nv.show_pytraj(traj)
 view4.display(gui=True)
 ~~~
-{: .python}
+{: .language-python}
 - Use filter to select atoms  
 - Create nucleic representation
 - Use hamburger menu to change representation properties 
@@ -303,13 +303,13 @@ Set size of the widget programmatically
 view3=nv.show_pytraj(traj)
 view3._remote_call('setSize', target='Widget', args=['700px', '440px'])
 ~~~  
-{: .python}
+{: .language-python}
 
 ~~~
 view3
 view3.clear()
 ~~~
-{: .python}
+{: .language-python}
 
 - Add representations
 ~~~
@@ -318,19 +318,19 @@ view3.add_hyperball(':B or :C and not hydrogen', colorScheme="element")
 view3.add_tube(':B or :C and not hydrogen')
 view3.add_spacefill('MG',colorScheme='element')
 ~~~  
-{: .python}
+{: .language-python}
 
 Try changing display projection
 ~~~
 view3.camera='orthographic'
 ~~~  
-{: .python}
+{: .language-python}
 
 Select all residues within a distance 5 Angstrom of residue 10
 ~~~
 traj=traj[:10<:5]
 ~~~
-{: .python}
+{: .language-python}
 
 ### Useful links
 
@@ -369,7 +369,7 @@ Download the file "modes.nmd"
 ~~~
 scp user45@moledyn.ace-net.training:scratch/workshop/pdb/6N4O/simulation/sim_pmemd/4-production/modes.nmd .
 ~~~
-{:.bash}
+{: .language-bash}
 
 - Open VMD
 - Go to `Extensions` -> `Analysis` -> `Normal Mode Wizard` -> `Load NMD File`

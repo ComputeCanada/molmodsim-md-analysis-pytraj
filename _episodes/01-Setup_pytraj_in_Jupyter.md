@@ -33,7 +33,7 @@ In this lesson we will be using PYTRAJ with AmberTools20. To start using these t
 ~~~
 module load StdEnv/2020 gcc/9.3.0 openmpi/4.0.3 python scipy-stack
 ~~~
-{: .bash}
+{: .language-bash}
 
 The next step is to install and activate a virtual environment. We need a virtual environment because we will be installing Python modules required for this lesson and virtual environment is the best way to install and manage Python modules on CC systems.
 
@@ -41,21 +41,21 @@ The next step is to install and activate a virtual environment. We need a virtua
 virtualenv ~/env-pytraj
 source ~/env-pytraj/bin/activate
 ~~~
-{: .bash}
+{: .language-bash}
 
 Once a virtual environment is installed and activated we can install Jupyter Notebook server. We begin installation by installing IPython kernel, the Python backend for Jupyter Notebook. Kernel is a process that runs independently and interacts with the Jupyter Notebook server and its user interface. The Jupyter Notebook automatically ensures that the IPython kernel is available in the default environment. However, as we will be using Python in a specific virtual environment set up for using AmberTools, we need to install IPython kernel into the newly created environment. 
 
 ~~~
 pip install --no-index jupyter ipykernel
 ~~~
-{: .bash}
+{: .language-bash}
 
 To make the environment *env-pytraj* accessible from notebook we need one more step: add the kernel specification for the new Python to Jupyter. You can use any name for the kernel, for example 'env-pytraj'.
 
 ~~~
 python -m ipykernel install --user --name=env-pytraj
 ~~~
-{: .bash} 
+{: .language-bash} 
 
 Finally, install three more packages that we will be using: 
 1. **NGLview**, a Jupyter widget for molecular visualization.
@@ -65,7 +65,7 @@ Finally, install three more packages that we will be using:
 ~~~
 pip install nglview pickle5 seaborn 
 ~~~
-{: .bash}
+{: .language-bash}
 
 As NGL viewer is a Jupyter notebook widget, we need to install and enable Jupyter widgets extension
 
@@ -73,13 +73,13 @@ As NGL viewer is a Jupyter notebook widget, we need to install and enable Jupyte
 jupyter nbextension install widgetsnbextension --py --sys-prefix 
 jupyter-nbextension enable widgetsnbextension --py --sys-prefix
 ~~~
-{: .bash}
+{: .language-bash}
 
 The *nglview* Python module provides NGLview Jupyter extension. We don't need to install it, but we need to enable it before it can be used:
 ~~~
 jupyter-nbextension enable nglview --py --sys-prefix
 ~~~
-{: .bash}
+{: .language-bash}
 
 We are now ready to start Jupyter notebook server. The new Python kernel with the name `env-pytraj` will be available for notebooks.
 
@@ -105,7 +105,7 @@ Before starting Jupyter server we need to allocate CPUs and RAM for our notebook
 ~~~
 salloc --mem-per-cpu=2000 --time=2:0:0 --ntasks=2
 ~~~
-{: .bash}
+{: .language-bash}
 
 Wait for the allocation to complete. When it's done you will see that the command prompt changed:
 
@@ -123,7 +123,7 @@ In this example salloc allocated the resources and logged you into the compute n
 ~~~
 bash ./jupyter_launch_ambertools.sh
 ~~~
-{: .bash}
+{: .language-bash}
 
 **Do not close this window**, closing it will terminate the server. Note the **port number** (the default is 8888, but if you or another user start a second server, port number will be incremented). Note the **notebook access token**, you will need it to connect to the Jupyter notebook.
 
@@ -137,7 +137,7 @@ Open **another** terminal tab or window and run the command:
 ~~~
 ssh user45@moledyn.ace-net.training -L 8888:node1:8888
 ~~~
-{: .bash}
+{: .language-bash}
 
 Replace the *port number* and the *node name* with the appropriate values.
 
@@ -165,7 +165,7 @@ In Jupyter open new notebook. Ensure that you are creating notebook with the pyt
 > jupyter kernelspec list
 > jupyter kernelspec uninstall env-pytraj
 > ~~~
-> {: .bash}
+> {: .language-bash}
 {: .callout}
 
 ### Plotting energy components from simulation logs
@@ -180,12 +180,12 @@ import matplotlib.pyplot as plt
 
 %cd ~/scratch/workshop/pdb/1RGG/AMBER/3_equilibration/
 ~~~
-{:.python}
+{: .language-python}
 
 ~~~
 ! extract_energies.sh equilibration_1.log
 ~~~
-{:.bash}
+{: .language-bash}
 
 File *extract_energies.sh* 
 
@@ -207,4 +207,4 @@ df.columns=["Time", "Etot", "Temp", "Press", "Volume"]
 df.plot(subplots=True, x="Time", xlabel="Time, ps", figsize=(6, 8))
 plt.show()
 ~~~
-{:.python}
+{: .language-python}
