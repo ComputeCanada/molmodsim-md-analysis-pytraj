@@ -94,7 +94,7 @@ plt.xlabel("Time, ns")
 plt.ylabel("RMSD, $ \AA $")
 plt.show()
 ~~~
-{: .language-python}
+  {: .language-python}
 
 >## Exercise
 >1. Compute and plot RMSD of all nucleic acid atoms (residues U,A,G,C) excluding hydrogens for all frames.  
@@ -192,6 +192,7 @@ plt.plot(time,rmsd)
 plt.xlabel("Time, ns")
 plt.ylabel("RMSD, $ \AA $")
 ~~~
+  {: .language-python}
 
 ### Interactive trajectory visualization with NGLView
 Data Visualization is one of the essential skills required to conduct a successful research involving molecular dynamics simulations. It allows you (or other people in the team) to better understand the nature of a process you are studying, and it gives you the ability to convey the proper message to a general audience in a publication. 
@@ -288,7 +289,8 @@ Try visualizing different atom selections. Selection language is described [here
 view4=nv.show_pytraj(traj)
 view4.display(gui=True)
 ~~~
-{: .language-python}
+  {: .language-python}
+
 - Use filter to select atoms  
 - Create nucleic representation
 - Use hamburger menu to change representation properties 
@@ -318,7 +320,7 @@ view3.add_hyperball(':B or :C and not hydrogen', colorScheme="element")
 view3.add_tube(':B or :C and not hydrogen')
 view3.add_spacefill('MG',colorScheme='element')
 ~~~  
-{: .language-python}
+  {: .language-python}
 
 Try changing display projection
 ~~~
