@@ -66,7 +66,7 @@ To compute RMSD we need a reference structure. We will use the initial pdb file 
 ~~~
 ref_coor = pt.load('inpcrd_nowat.pdb')
 ~~~
-{: .language-python}
+  {: .language-python}
 
 - You can also use any trajectory frame, for example ref_crd = traj[0] as a reference structure.  
 
