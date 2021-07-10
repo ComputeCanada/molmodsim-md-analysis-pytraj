@@ -170,11 +170,9 @@ Once Jupyter is loaded, open a new notebook. Ensure that you create a notebook w
 {: .callout}
 
 ### Plotting energy components from simulation logs
+We are now ready to use pytraj in the Jupyter notebook. Let’s plot energies from the simulation logs of our equilibration runs.
 
-We are now ready to use pytraj in Jupyter notebook.  Let's plot energies from the simulation logs of our equilibration runs. 
-
-First load `pandas`, and `matplotlib` modules. Then move into the directory where the input data files are located.
-
+First, we load *pandas* and *matplotlib* modules. Then move into the directory where the input data files are located: 
 ~~~
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -183,13 +181,13 @@ import matplotlib.pyplot as plt
 ~~~
 {: .language-python}
 
+Extract some energy components (total energy, temperature, pressure, and volume) from the equilibration log and save them in the file *energy.dat*:
 ~~~
 ! extract_energies.sh equilibration_1.log
 ~~~
 {: .language-bash}
 
-File *extract_energies.sh* 
-
+File *extract_energies.sh* is shell script calling *cpptraj* program to do the job:
 ~~~
 #!/bin/bash
 echo "Usage: extract_energies simulation_log_file" 
@@ -202,6 +200,7 @@ EOF
 ~~~
 {:.file-content}
 
+Read the data saved in the file *energy.dat* and plot it:
 ~~~
 df=pd.read_table('energy.dat', delim_whitespace=True)
 df.columns=["Time", "Etot", "Temp", "Press", "Volume"]
