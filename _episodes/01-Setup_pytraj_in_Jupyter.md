@@ -127,10 +127,13 @@ bash ./jupyter_launch_ambertools.sh
 ~~~
 {: .language-bash}
 
-**Do not close this window**, closing it will terminate the server. Note the **port number** (the default is 8888, but if you or another user start a second server, port number will be incremented). Note the **notebook access token**, you will need it to connect to the Jupyter notebook.
+**Do not close this window**, closing it will terminate the server. 
+Take a note of the **port number** and the **notebook access token**, you will them to connect to the Jupyter notebook.
+
+Jupiter uses port 8888 by default, but if this port is already used (for example, if you or some other user have already started the server), Jupyter will use the next available port. 
 
 ### Connecting to Jupyter server
-The message in the example above informs that the notebook server is listening at port 8888 of the *node1*. Compute nodes cannot be accessed directly from the Internet, but we can connect to the login node, and the login node can connect to any compute node. Thus, connection to a compute node should also be possible. How do we connect to *node1* at port 8888? We can instruct ssh client program to map port 8888 of *node1* to a port on the local computer. This type of connection is called *ssh tunneling* or *ssh port forwarding.* Ssh tunneling allows transporting networking data between computers over an encrypted SSH connection.
+The message in the example above informs that the notebook server is listening at port 8888 of the *node1*. Compute nodes cannot be accessed directly from the Internet, but we can connect to the login node, and the login node can connect to any compute node. Thus, connection to a compute node should also be possible. How do we connect to *node1* at port 8888? We can instruct ssh client program to map port 8888 of *node1* to a port on the local computer. This type of connection is called *tunneling* or *port forwarding.* SSH tunneling allows transporting networking data between computers over an encrypted connection.
 
 ![schematic of two SSH-tunnels]({{ page.root }}/fig/ssh_tunnel.svg)
 
@@ -208,3 +211,4 @@ df.plot(subplots=True, x="Time", xlabel="Time, ps", figsize=(6, 8))
 plt.show()
 ~~~
 {: .language-python}
+
