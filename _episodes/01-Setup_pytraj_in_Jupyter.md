@@ -135,7 +135,7 @@ Jupiter uses port 8888 by default, but if this port is already used (for example
 ### Connecting to Jupyter server
 The message in the example above informs that the notebook server is listening at port 8888 of the *node1*. Compute nodes cannot be accessed directly from the Internet, but we can connect to the login node, and the login node can connect to any compute node. Thus, connection to a compute node should also be possible. How do we connect to *node1* at port 8888? We can instruct ssh client program to map port 8888 of *node1* to a port on the local computer. This type of connection is called *tunneling* or *port forwarding.* SSH tunneling allows transporting networking data between computers over an encrypted connection.
 
-The figure below shows ssh tunnels to *node1* and *node 2* opened by two users via the host *moledyn.ace-net.training*. In this example, *user04* has his Jupyter server running at node2:8888, and he is tunneling it to port 8888 on his local computer. Jupyter server of *user34* runs at node1:8890, and this user wanted to use his local port 7945.
+The figure below shows ssh tunnels to *node1* and *node 2* opened by two users via the host *moledyn.ace-net.training*. In this example, three Jupyter servers started by different users are listening at ports 8888, 8889, and 8890 of each node. Jupyter server  of *user04* runs at node2:8888, and this user is tunneling it to port 8888 of his local computer. Jupyter server of *user34* runs at node1:8890, and this user wanted to use his local port 7945.
 
 ![schematic of two SSH-tunnels]({{ page.root }}/fig/ssh_tunnel.svg)
 
