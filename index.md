@@ -13,10 +13,8 @@ by Compute Canada’s Molecular Modelling and Simulation Team.
 >
 > This material has been designed for a multi-day workshop offered by Compute Canada’s Molecular Modelling and Simulation Team and ACENET.
 >
-> The procedure on how to setup, configure and start the Jupyter notebook server should work on all 
-> of Compute Canada's clusters as well as all clusters using Compute Canada's software stack.  
-> However the data-set that is being used in this material is currently only available on a "Magic Castle"
-> virtual cluster that has been created for this online-workshop.
+> The procedure on how to setup, configure and start the Jupyter notebook server should work on all of Compute Canada's clusters as well as all clusters using Compute Canada's software stack.  
+> Data used in this material can be found [here](https://github.com/ComputeCanada/molmodsim-amber-md-lesson/releases/tag/workshop-2021-04).
 {: .prereq}
 
 {% include links.md %}
