@@ -221,7 +221,7 @@ traj = traj.autoimage()
 
 Create NGLview widget 
 ~~~
-view = nv.show_pytraj(trj)
+view = nv.show_pytraj(traj)
 ~~~  
 {: .language-python}
 
@@ -327,12 +327,7 @@ Try changing display projection
 view3.camera='orthographic'
 ~~~  
 {: .language-python}
-
-Select all residues within a distance 5 Angstrom of residue 10
-~~~
-traj=traj[:10<:5]
-~~~
-{: .language-python}
+https://github.com/ComputeCanada/molmodsim-pytraj-analysis/blob/gh-pages/code/Notebooks/pytraj_nglview.ipynb
 
 ### Useful links
 
@@ -357,11 +352,18 @@ traj=traj[:10<:5]
 
 
 ### Principal component analysis
-One way to think of Principal Components is that they are a means of explaining variance in the data. PCA performed on MD trajectories decomposes very complex molecular motion into a set of orthogonal components. Algorithmically, PCA performs a linear transformation that diagonalizes the covariance matrix and thus it removes the instantaneous linear correlations among the fluctuations of atomic coordinates. Principal Components are sorted by their contribution to the overall fluctuations. The first PC describes the largest variance in the data, the second PC shows the second largest and so on. PCA is useful for gaining insight into the dynamics of a system. It has been shown that a dominant motion of the system can be described by just a few largest principal components. 
+Principal components can be thought of as a way to explain variance in data. Through PCA, very complex molecular motion is decomposed into orthogonal components. Once these components are sorted, the most significant motions can be identified. 
 
-The input to PCA is the coordinate covariance matrix calculated from the molecular dynamics trajectory. The trajectory for PCA is prepared by RMS fitting of the coordinate to a reference frame to eliminate global translational and rotational motions. Then the coordinate covariance matrix (the matrix of deviations from average structure) is computed. Once the matrix is computed, PCs are obtained by diagonalizing it. The diagonalization procedure yield the eigenvectors (we call them the PCs) and the eigenvalues (the contribution of each PC to the total fluctuations). Once the PCs are found we can project the trajectory coordinates on the principal components. By trajectory here we mean the transformed trajectory where coordinates are deviations of each atom form its average position.  Projection of the trajectory on PCs will yield a pseudo-trajectories of motion along each principal component which can be visualized with VMD.
+PCA involves diagonalizing the covariance matrix to eliminate instantaneous linear correlations between atomic coordinate fluctuations. We call the largest eigenvectors of the covariance matrix, principal components (PC). After PC are sorted according to their contribution to the overall fluctuations of the data, the first PC describes the largest variance and so forth. 
 
-Overall PCA is quite complex procedure involving many steps. All necessary PCA steps are carried out automatically by the *pca* module of *ptraj*.
+Researchers have found that only a few of the largest principal components are able to accurately describe the dominant motion of the system. Thus, a PCA provides insight into the dynamics of a system by identifying the most prominent motions. 
+
+PCA is a complex procedure with many steps. It uses the coordinate covariance matrix calculated from the molecular dynamics trajectory. 
+1. To prepare the trajectory for PCA, the coordinates are fitted to a reference frame to eliminate global translations and rotations. 
+2. Next, the coordinate covariance matrix (the matrix of deviations from the average structure) is calculated and diagonalized. The diagonalization procedure yields the eigenvectors and the eigenvalues (the contribution of each eigenvector to the total fluctuations). 
+3. Once we determine which eigenvectors (PCs) are the largest, we can project trajectory coordinates onto each of them. The term trajectory here refers to a transformed trajectory, in which the coordinates represent each atom's deviation from its average position. When we project this trajectory onto a PC, we will obtain a pseudo-trajectory that is a representation of motion along the principal component.
+
+PCA steps are performed automatically by the *pca* module of *ptraj*.
 
 [View Notebook]({{ site.repo_url }}/blob/{{ site.default_branch }}/code/Notebooks/pytraj_pca.ipynb)
 
@@ -369,7 +371,7 @@ Overall PCA is quite complex procedure involving many steps. All necessary PCA s
 
 Download the file "modes.nmd"
 ~~~
-scp user45@moledyn.ace-net.training:scratch/workshop/pdb/6N4O/simulation/sim_pmemd/4-production/modes.nmd .
+scp user100@moledynii.ace-net.training:scratch/workshop/pdb/6N4O/simulation/sim_pmemd/4-production/modes.nmd .
 ~~~
 {: .language-bash}
 
@@ -379,9 +381,9 @@ scp user45@moledyn.ace-net.training:scratch/workshop/pdb/6N4O/simulation/sim_pme
 - In the popup window `NMWiz - PCA models` chose the `Active mode` and press `Animation` - `Make` box.
 
 ### Cross-correlation analysis.
-Collective motions of atoms in proteins are crucial for the biological function. Collective motions are difficult to observe experimentally, but molecular dynamics trajectories can provide this information. The dynamic correlation between all atoms within the system can be obtained by analyzing atomic motions in the simulation. 
+Collective motions of atoms in proteins are crucial for the biological function. Molecular dynamics trajectories offer insight into collective motions, which are difficult to see experimentally. By analyzing atomic motions in the simulation, we can identify how all atoms in the system are dynamically linked. 
 
-The pytraj dynamic cross-correlation module *atomiccorr* computes a matrix of atom-wise cross-correlation coefficients. Each matrix element describes the degree to which a pair of atoms i and j move together. The correlation values lie between -1 and 1, where 1 describes full correlation, and -1 corresponds to anti-correlation.
+This type of analysis can be performed with the dynamic cross-correlation module *atomiccorr*. The module computes a matrix of atom-wise cross-correlation coefficients. Matrix elements indicate how strongly two atoms i and j move together.  Correlation values range between -1 and 1, where 1 represents full correlation, and -1 represents anticorrelation.
 
 [View Notebook]({{ site.repo_url }}/blob/{{ site.default_branch }}/code/Notebooks/pytraj_xcorr.ipynb)
 

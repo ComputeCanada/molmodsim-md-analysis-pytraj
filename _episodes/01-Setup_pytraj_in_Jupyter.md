@@ -21,7 +21,6 @@ Other useful MD analysis software: [MDAnalysis](https://userguide.mdanalysis.org
 References:  
 1. [PTRAJ and CPPTRAJ: Software for Processing and Analysis of Molecular Dynamics Trajectory Data](https://pubs.acs.org/doi/full/10.1021/ct400341p)
 
-
 ## Using PYTRAJ in Jupyter notebook
 The use of the Jupyter notebook becomes increasingly popular for data analysis and visualization. One of the most attractive features of Jupyter is how well it combines different media (your code, notes, and visualizations) in one solution. By keeping everything in one easily accessible place, notebooks greatly simplify the management and sharing of your work.
 
@@ -30,7 +29,8 @@ Before going into details of MD analysis with PYTRAJ we need to create a Python 
 ### Installing Python Virtual Environment and Jupyter Notebook.
 In this lesson, we will be using PYTRAJ with AmberTools20. To start using these tools, first, you need to load modules required for AmberTools, then load `python` and `scipy-stack` modules:
 ~~~
-module load StdEnv/2020 gcc/9.3.0 openmpi/4.0.3 python scipy-stack
+ml --force purge
+ml StdEnv/2020 gcc openmpi python ambertools/20
 ~~~
 {: .language-bash}
 
@@ -93,7 +93,8 @@ Let's create a Jupyter startup file for use with AmberTools module, *jupyter_lau
 
 ~~~
 #!/bin/bash
-ml StdEnv/2020 gcc openmpi python scipy-stack ambertools
+ml --force purge
+ml StdEnv/2020 gcc openmpi python ambertools/20
 source $EBROOTAMBERTOOLS/amber.sh
 source ~/env-pytraj/bin/activate
 unset XDG_RUNTIME_DIR
@@ -105,13 +106,13 @@ Before starting the Jupyter server, we need to allocate CPUs and RAM for our not
 Submit request of an interactive resource allocation using the *salloc* command:
 
 ~~~
-salloc --mem-per-cpu=2000 --time=2:0:0 --ntasks=2
+salloc --ntasks=2 --mem-per-cpu=1000 --time=3:0:0
 ~~~
 {: .language-bash}
 
 Wait for the allocation to complete. When it's done, you will see that the command prompt changed:
 ~~~
-[user45@login1 ~]$ salloc -c4 --mem-per-cpu=1000 --time=10:0:0
+[user100@login1 ~]$ salloc --ntasks=2 --mem-per-cpu=1000 --time=3:0:0
 salloc: Granted job allocation 168
 salloc: Waiting for resource configuration
 salloc: Nodes node1 are ready for job
@@ -141,7 +142,7 @@ The figure below shows ssh tunnels to *node1* and *node 2* opened by two users v
 
 Open **another** terminal tab or window and run the command:
 ~~~
-ssh user45@moledyn.ace-net.training -L 8888:node1:8888
+ssh user100@moledynii.ace-net.training -L 8888:node1:8888
 ~~~
 {: .language-bash}
 
@@ -186,11 +187,18 @@ import matplotlib.pyplot as plt
 ~~~
 {: .language-python}
 
+Install script extracting energy components from simulation output files
+~~~
+mkdir ~/bin 
+cp ~/scratch/workshop/scripts/extract_energies.sh ~/bin
+~~~
+{: .language-bash}
+
 Extract some energy components (total energy, temperature, pressure, and volume) from the equilibration log and save them in the file *energy.dat*:
 ~~~
 ! extract_energies.sh equilibration_1.log
 ~~~
-{: .language-bash}
+{: .language-python}
 
 File *extract_energies.sh* is shell script calling *cpptraj* program to do the job:
 ~~~
