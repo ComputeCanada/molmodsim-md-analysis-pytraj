@@ -4,37 +4,69 @@ teaching: 25
 exercises: 0
 questions:
 - "What tools are available to analyze my MD-data?"
-- "How to setup Jupyter for MD analysis"
+- "How to setup Jupyter for simulation analysis?"
 objectives:
-- "Learn how to set up and use Jupyter notebook in CC environment."
+- "Learn how to set up and use Jupyter notebook on Alliance clusters."
 keypoints:
 - "By keeping everything in one easy accessible place Jupyter notebooks greatly simplify the management and sharing of your work"
 ---
 
-## Introduction
-PYTRAJ is a Python front end to the AMBER [CPPTRAJ](https://amber-md.github.io/cpptraj/CPPTRAJ.xhtml) package. CPPTRAJ provides a variety of high level analysis commands, and at the same time it is suitable for batch processing. With PYTRAJ/CPPTRAJ you can do many operations on the raw MD trajectories. For example, convert among trajectory formats, process groups of trajectories generated with ensemble methods, image with periodic boundary conditions, create average structures, create subsets of the system. PYTRAJ is able to handle many files at the same time, and it can handle very large trajectories.
+### What is PYTRAJ?
 
-PYTRAJ offers more than 50 types of analyses such as RMS fitting, measuring distances, B-factors, radii of gyration, radial distribution functions, time correlations, and many more. PYTRAJ supports MPI, and usage of MPI is straightforward. You don't really need to understand deeply about MPI or write complicated code.
+{: .instructor_notes}
+PYTRAJ is a Python front end to AMBER's [CPPTRAJ](https://amber-md.github.io/cpptraj/CPPTRAJ.xhtml) package. The CPPTRAJ software provides an array of high-level analysis commands, as well as batch processing capabilities. You can perform many operations on raw MD trajectories with PYTRAJ/CPPTRAJ. For example, convert between trajectory formats, process groups of trajectories generated with ensemble methods, create average structures, create subsets of the system, etc. A large number of files can be handled by PYTRAJ in parallel, and it can handle very large trajectory sizes.
+{: .instructor_notes}
 
-Other useful MD analysis software: [MDAnalysis](https://userguide.mdanalysis.org/stable/index.html), [MDTraj](https://mdtraj.org/), [Pteros](https://yesint.github.io/pteros/), [LOOS/PyLOOS](http://grossfieldlab.github.io/loos/index.htmland). These packages provide libraries that can be used to compose analysis programs. While this approach offers great flexibility, the learning curve is steep, and you will need to spend more time to master them.
+{: .instructor_notes}
+There are more than 50 types of analysis in PyTRAJ, including RMS fitting, measuring distances, B-factors, radii of gyration, radial distribution functions, and time correlations. In PyTRAJ, parallelization is implemented by MPI, and its use is relatively straightforward. You won't have to write complicated code or know much about MPI to use it.
+{: .instructor_notes}
+
+{: .instructor_notes}
+[MDAnalysis](https://userguide.mdanalysis.org/stable/index.html), [MDTraj](https://mdtraj.org/), [Pteros](https://yesint.github.io/pteros/), [LOOS/PyLOOS](http://grossfieldlab.github.io/loos/index.htmland) are other useful MD analysis packages. These packages provide libraries that can be used to compose analysis programs. Even though this approach offers great flexibility, it will take you longer to master it because it has a steep learning curve.
+{: .instructor_notes}
+
+{: .self_study_text}
+- PYTRAJ is a Python front end to AMBER's [CPPTRAJ](https://amber-md.github.io/cpptraj/CPPTRAJ.xhtml) 
+package.
+- PYTRAJ offers more than 50 types of analysis 
+- other useful MD analysis packages: [MDAnalysis](https://userguide.mdanalysis.org/stable/index.html), [MDTraj](https://mdtraj.org/), [Pteros](https://yesint.github.io/pteros/), [LOOS/PyLOOS](http://grossfieldlab.github.io/loos/index.htmland) 
+{: .self_study_text}
 
 References:  
 1. [PTRAJ and CPPTRAJ: Software for Processing and Analysis of Molecular Dynamics Trajectory Data](https://pubs.acs.org/doi/full/10.1021/ct400341p)
 
-## Using PYTRAJ in Jupyter notebook
-The use of the Jupyter notebook becomes increasingly popular for data analysis and visualization. One of the most attractive features of Jupyter is how well it combines different media (your code, notes, and visualizations) in one solution. By keeping everything in one easily accessible place, notebooks greatly simplify the management and sharing of your work.
 
-Before going into details of MD analysis with PYTRAJ we need to create a Python virtual environment. A virtual environment is a framework for the management of multiple isolated Python environments. We use it on CC systems for the installation of Python packages in user accounts.
+### Installing a Python Virtual Environment and a Jupyter Notebook.
 
-### Installing Python Virtual Environment and Jupyter Notebook.
-In this lesson, we will be using PYTRAJ with AmberTools20. To start using these tools, first, you need to load modules required for AmberTools, then load `python` and `scipy-stack` modules:
+{: .instructor_notes}
+Jupyter notebooks are becoming increasingly popular for data analysis and visualization. One of Jupyter notebooks's most attractive features is its ability to combine different media (code, notes, and visualizations) in one place. Your work is much easier to manage and share with notebooks because everything is kept in one place that you can easily access.
+{: .instructor_notes}
+
+{: .instructor_notes}
+Before going into details of MD analysis with PYTRAJ we need to create a Python virtual environment. The virtual environment is a framework for separating multiple Python installations from one another and managing them. A virtual environment is needed since we will be installing Python modules for this lesson and managing Python modules on Alliance systems is best done in a virtual environment.
+{: .instructor_notes}
+
+{: .instructor_notes}
+In this lesson, we will be using PYTRAJ from AmberTools/22. To setup a python virtual environment first load the AmberTools/22 module:
+{: .instructor_notes}
+
+{: .self_study_text}
+Load the AmberTools/22 module:
+{: .self_study_text}
+
 ~~~
 ml --force purge
-ml StdEnv/2020 gcc openmpi python ambertools/20
+ml StdEnv/2020 gcc/9.3.0 cuda/11.4 openmpi/4.0.3 ambertools/22
 ~~~
 {: .language-bash}
 
-The next step is to install and activate a virtual environment. We need a virtual environment because we will be installing Python modules required for this lesson and a virtual environment is the best way to install and manage Python modules on CC systems.
+{: .instructor_notes}
+The next step is to install and activate a virtual environment:
+{: .instructor_notes}
+
+{: .self_study_text}
+Install and activate a virtual environment:
+{: .self_study_text}
 
 ~~~
 virtualenv ~/env-pytraj
@@ -42,31 +74,48 @@ source ~/env-pytraj/bin/activate
 ~~~
 {: .language-bash}
 
-Once a virtual environment is installed and activated, we can install the Jupyter Notebook server. We begin installation by installing the IPython kernel, the Python backend for Jupyter Notebook. A kernel is a process that runs independently and interacts with the Jupyter Notebook server and its user interface. The Jupyter Notebook automatically ensures that the IPython kernel is available in the default environment. However, as we will be using Python in a specific virtual environment set up for using AmberTools, we need to install the IPython kernel into the newly created environment. 
+{: .instructor_notes}
+Once a virtual environment is installed and activated, we can install the Jupyter Notebook server.
+{: .instructor_notes}
 
+{: .self_study_text}
+Install Jupyter Notebook server:
+{: .self_study_text}
 ~~~
-pip install --no-index jupyter ipykernel
+pip install --no-index jupyter
 ~~~
 {: .language-bash}
 
-To make the environment *env-pytraj* accessible from the notebook, we need one more step: add the kernel specification for the new Python to Jupyter. You can use any name for the kernel, for example, "env-pytraj".
+{: .instructor_notes}
+Python interacts with Jupyter Notebook servers through IPython kernels. When we loaded the Ambertools/22 module the appropriate Python and IPython modules were loaded as well. The new IPython kernel specification has to be added to Jupyter before the environment *`env-pytraj`* can be accessed from the notebook. The kernel can be named whatever you want, for instance, "env-pytraj".
+{: .instructor_notes}
+
+{: .self_study_text}
+Add the new IPython kernel specification to Jupyter:
+{: .self_study_text}
 
 ~~~
 python -m ipykernel install --user --name=env-pytraj
 ~~~
 {: .language-bash} 
 
+{: .instructor_notes}
 Finally, install three more packages that we will be using: 
 1. **NGLview**, a Jupyter widget for molecular visualization.
 2. **Pickle**, a module providing functions for serializing Python objects (conversion into a byte stream). Objects need to be serialized for storage on a hard disk and loaded back into Python. 
 3. **Seaborn**, a Python data visualization library. It extends a popular *matplotlib* library providing a high-level interface for drawing, templates for attractive and informative statistical graphics.
+{: .instructor_notes}
+
+{: .self_study_text}
+Install three more packages that will be used in this tutorial:
+{: .self_study_text}
 
 ~~~
 pip install nglview pickle5 seaborn 
 ~~~
 {: .language-bash}
 
-As NGL viewer is a Jupyter notebook widget, we need to install and enable Jupyter widgets extension
+As NGL viewer is a Jupyter notebook widget, we need to install and enable Jupyter widgets extension:
 
 ~~~
 jupyter nbextension install widgetsnbextension --py --sys-prefix 
@@ -74,7 +123,7 @@ jupyter-nbextension enable widgetsnbextension --py --sys-prefix
 ~~~
 {: .language-bash}
 
-The *nglview* Python module provides NGLview Jupyter extension. Thus, we don't need to install it, but we need to enable it before we can use it:
+The `nglview` Python module provides NGLview Jupyter extension. Thus, we don't need to install it, but we need to enable it before we can use it:
 ~~~
 jupyter-nbextension enable nglview --py --sys-prefix
 ~~~
@@ -82,31 +131,44 @@ jupyter-nbextension enable nglview --py --sys-prefix
 
 We are now ready to start Jupyter notebook server. The new Python kernel with the name `env-pytraj` will be available for our notebooks.
 
-### Launching Jupyter notebook server
-While the following example is for launching Jupyter on the training cluster, the procedure is the same on all other Compute Canada systems. To launch a Jupyter server on a Compute Canada system, you only need to change the name of the login and the compute nodes. 
+### Launching a Jupyter Server
 
-To make AmberTools available in a notebook, we need to load the `ambertools` module and activate the virtual environment before starting the Jupyter server. 
+{: .instructor_notes}
+While the following example is for launching Jupyter on the training cluster, the procedure is the same on all other Alliance systems. To launch a Jupyter server on any cluster, you only need to change the name of the login and the compute nodes. 
+{: .instructor_notes}
 
+{: .instructor_notes}
+To make AmberTools/22 available in a notebook, we need to load the `ambertools/22` module and activate the virtual environment before starting the Jupyter server. 
+{: .instructor_notes}
+
+{: .instructor_notes}
 Launching a server involves a sequence of several commands. It is convenient to save them in a file. You can later execute commands from this file (we call this "source file") instead of typing them every time.
+{: .instructor_notes}
 
-Let's create a Jupyter startup file for use with AmberTools module, *jupyter_launch_ambertools.sh*, with the following content: 
+Let's create a Jupyter startup file for use with AmberTools module, `jupyter_launch_ambertools.sh`, with the following content: 
 
 ~~~
 #!/bin/bash
 ml --force purge
-ml StdEnv/2020 gcc openmpi python ambertools/20
-source $EBROOTAMBERTOOLS/amber.sh
+ml StdEnv/2020  gcc/9.3.0 cuda/11.4 openmpi/4.0.3 ambertools/22
 source ~/env-pytraj/bin/activate
-unset XDG_RUNTIME_DIR
+unset XDG_RUNTIME_DIR 
 jupyter notebook --ip $(hostname -f) --no-browser
 ~~~
 {: .file-content}
+
+Make it executable: 
+~~~
+chmod +x jupyter_launch_ambertools.sh
+~~~
+{: .language-bash}
+
 Before starting the Jupyter server, we need to allocate CPUs and RAM for our notebook. Let's request two MPI tasks because we will learn how to analyze data in parallel.  
 
-Submit request of an interactive resource allocation using the *salloc* command:
+Submit request of an interactive resource allocation using the `salloc` command:
 
 ~~~
-salloc --ntasks=2 --mem-per-cpu=1000 --time=3:0:0
+salloc --ntasks=2 --mem-per-cpu=1000 --time=4:0:0
 ~~~
 {: .language-bash}
 
@@ -120,23 +182,35 @@ salloc: Nodes node1 are ready for job
 ~~~
 {:.output}
 
-In this example, *salloc* allocated the resources and logged you into the compute node *node1*. Note the name of the node where the notebook server will be running. You will need it to create ssh tunnel. 
+In this example, `salloc` allocated the resources and logged you into the compute node `node1`. Note the name of the node where the notebook server will be running. You will need it to create ssh tunnel. 
 
-Now we can start the Jupyter server by executing commands from the file *jupyter_launch_ambertools.sh*:
+Now we can start the Jupyter server by executing commands from the file `jupyter_launch_ambertools.sh`:
 ~~~
-bash ./jupyter_launch_ambertools.sh
+./jupyter_launch_ambertools.sh
 ~~~
 {: .language-bash}
 
-**Do not close this window**, closing it will terminate the server. 
-Take a note of the **port number** and the **notebook access token**, you will them to connect to the Jupyter notebook.
+~~~
+...
+[I 15:27:14.717 NotebookApp] http://node1.int.moledyn.ace-net.training:8888/?token=442c622380cc87d682b5dc2f7b0f61912eb2d06edd6a2079
+...
+~~~
+{: .output}
+
+Do not close this window, closing it will terminate the server.  
+Take a note of: 
+1. the **node** [node1], 
+2. the **port number** [8888],
+3. the **notebook access token** [442c622380cc87d682b5dc2f7b0f61912eb2d06edd6a2079] 
+
+You will need this data to connect to the Jupyter notebook.
 
 Jupiter uses port 8888 by default, but if this port is already used (for example, if you or some other user have already started the server), Jupyter will use the next available port. 
 
-### Connecting to Jupyter server
+### Connecting to a Jupyter server
 The message in the example above informs that the notebook server is listening at port 8888 of the *node1*. Compute nodes cannot be accessed directly from the Internet, but we can connect to the login node, and the login node can connect to any compute node. Thus, connection to a compute node should also be possible. How do we connect to *node1* at port 8888? We can instruct ssh client program to map port 8888 of *node1* to a port on the local computer. This type of connection is called *tunneling* or *port forwarding.* SSH tunneling allows transporting networking data between computers over an encrypted connection.
 
-The figure below shows ssh tunnels to *node1* and *node 2* opened by two users via the host *moledyn.ace-net.training*. In this example, three Jupyter servers started by different users are listening at ports 8888, 8889, and 8890 of each node. Jupyter server  of *user04* runs at node2:8888, and this user is tunneling it to port 8888 of his local computer. Jupyter server of *user34* runs at node1:8890, and this user wanted to use his local port 7945.
+The figure below shows ssh tunnels to *node1* and *node2* opened by two users via the host *moledyn.ace-net.training*. In this example, three Jupyter servers started by different users are listening at ports 8888, 8889, and 8890 of each node. Jupyter server  of *user04* runs at node2:8888, and this user is tunneling it to port 8888 of his local computer. Jupyter server of *user34* runs at node1:8890, and this user wanted to use his local port 7945.
 
 ![schematic of two SSH-tunnels]({{ page.root }}/fig/ssh_tunnel.svg)
 
@@ -166,7 +240,7 @@ Once Jupyter is loaded, open a new notebook. Ensure that you create a notebook w
 > ![SSH command in local terminal]({{ page.root }}/fig/mobaxterm_ssh_command.png)
 {: .callout}
 
-> ## Uninstalling virtual environment from Jupyter:
+> ## Uninstalling the IPython kernel:
 >
 > ~~~
 > jupyter kernelspec list
@@ -174,51 +248,4 @@ Once Jupyter is loaded, open a new notebook. Ensure that you create a notebook w
 > ~~~
 > {: .language-bash}
 {: .callout}
-
-### Plotting energy components from simulation logs
-We are now ready to use pytraj in the Jupyter notebook. Let’s plot energies from the simulation logs of our equilibration runs.
-
-First, we load *pandas* and *matplotlib* modules. Then move into the directory where the input data files are located: 
-~~~
-import pandas as pd
-import matplotlib.pyplot as plt
-
-%cd ~/scratch/workshop/pdb/1RGG/AMBER/3_equilibration/
-~~~
-{: .language-python}
-
-Install script extracting energy components from simulation output files
-~~~
-mkdir ~/bin 
-cp ~/scratch/workshop/scripts/extract_energies.sh ~/bin
-~~~
-{: .language-bash}
-
-Extract some energy components (total energy, temperature, pressure, and volume) from the equilibration log and save them in the file *energy.dat*:
-~~~
-! extract_energies.sh equilibration_1.log
-~~~
-{: .language-python}
-
-File *extract_energies.sh* is shell script calling *cpptraj* program to do the job:
-~~~
-#!/bin/bash
-echo "Usage: extract_energies simulation_log_file" 
-log=$1
-
-cpptraj << EOF
-readdata $log
-writedata energy.dat $log[Etot] $log[TEMP] $log[PRESS] $log[VOLUME] time 0.1
-EOF
-~~~
-{:.file-content}
-
-Read the data saved in the file *energy.dat* and plot it:
-~~~
-df=pd.read_table('energy.dat', delim_whitespace=True)
-df.columns=["Time", "Etot", "Temp", "Press", "Volume"]
-df.plot(subplots=True, x="Time", xlabel="Time, ps", figsize=(6, 8))
-plt.show()
-~~~
-{: .language-python}
 
