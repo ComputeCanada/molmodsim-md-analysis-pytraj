@@ -216,7 +216,7 @@ The figure below shows ssh tunnels to *node1* and *node2* opened by two users vi
 
 Open **another** terminal tab or window and run the command:
 ~~~
-ssh user100@moledynii.ace-net.training -L 8888:node1:8888
+ssh user100@moledyn.ace-net.training -L 8888:node1:8888
 ~~~
 {: .language-bash}
 

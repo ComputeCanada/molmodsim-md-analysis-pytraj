@@ -32,7 +32,7 @@ All PCA steps are performed automatically by the *`pca`* module of *`ptraj`*.
 
 Download the file "modes.nmd"
 ~~~
-scp user100@moledynii.ace-net.training:scratch/workshop/pdb/6N4O/simulation/sim_pmemd/4-production/modes.nmd .
+scp user100@moledyn.ace-net.training:scratch/workshop/pdb/6N4O/simulation/sim_pmemd/4-production/modes.nmd .
 ~~~
 {: .language-bash}
 
