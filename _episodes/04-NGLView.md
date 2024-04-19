@@ -10,6 +10,7 @@ keypoints:
 - " "
 ---
 
+
 ### Interactive trajectory visualization with NGLView
 Data Visualization is one of the essential skills required to conduct a successful research involving molecular dynamics simulations. It allows you (or other people in the team) to better understand the nature of a process you are studying, and it gives you the ability to convey the proper message to a general audience in a publication. 
 
@@ -19,13 +20,20 @@ Open a new notebook. Import pytraj, nglview and make sure you are in the right d
 ~~~
 import pytraj as pt
 import nglview as nv
-%cd ~/scratch/workshop/pdb/6N4O/simulation/sim_pmemd/4-production
+%cd ~/workshop_pytraj/example_02
 ~~~
 {: .language-python}   
 
+Quick test - download and visualize 1si4.pdb. 
+~~~
+import nglview as nv
+view = nv.show_pdbid("1si4")
+view
+~~~
+
 Load the trajectory:  
 ~~~
-traj=pt.iterload('mdcrd_nowat.nc', top = 'prmtop_nowat.parm7')
+traj=pt.iterload('mdcrd_nowat.xtc', top = 'prmtop_nowat.parm7', frame_slice=[(0,1000)])
 ~~~
 {: .language-python}
 
@@ -41,7 +49,6 @@ view = nv.show_pytraj(traj)
 ~~~  
 {: .language-python}
 
-- The default representation is ball and sticks
 - The defaults selection is all atoms
 
 Render the view. Try interacting with the viewer using [Mouse](http://nglviewer.org/ngl/api/manual/interaction-controls.html#mouse) and [Keyboard](http://nglviewer.org/ngl/api/manual/interaction-controls.html#keyboard) controls.
@@ -130,6 +137,7 @@ view3.clear()
 {: .language-python}
 
 - Add representations
+
 ~~~
 view3.add_ball_and_stick('protein', opacity=0.3, color='grey')
 view3.add_hyperball(':B or :C and not hydrogen', colorScheme="element")

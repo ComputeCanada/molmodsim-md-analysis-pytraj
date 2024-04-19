@@ -28,11 +28,68 @@ All PCA steps are performed automatically by the *`pca`* module of *`ptraj`*.
 
 [View Notebook]({{ site.repo_url }}/blob/{{ site.default_branch }}/code/Notebooks/pytraj_pca.ipynb)
 
+
+~~~
+import pytraj as pt
+import nglview as nv
+import numpy as np
+import parmed
+from matplotlib import pyplot as plt
+
+%cd ~/workshop_pytraj/example_02
+~~~
+{: .language-python}
+
+Register all trajectory frames for analysis and move molecules back to the initial box.
+~~~
+frames=pt.iterload('mdcrd_nowat.xtc', top = 'prmtop_nowat.parm7')
+frames = frames.autoimage()
+~~~
+{: .language-python}
+
+- The results are saved in the structure *data*
+- Projection values of each frame to each of the 5 modes are saved in the arrays data[0][0], ... , data[0][4]
+- Eigvenvalues of the first 5 modes are saved in the array data[1][0]
+- Eigvenvectors of first 5 modes are saved in the arrays data[1][1][0], ... , data[1][1][4]
+
+#### Perform PCA analysis
+
+- Analyze 39 nucleic acid residues, 6 backbone atoms in each residue. The total number of atoms included in the analysis is 234, so eigenvectors will be 234 elements long.
+- Request calculations of the three first principal components  
+
+~~~
+data = pt.pca(frames, mask=":860-898@O3',C3',C4',C5',O5',P", n_vecs=5)
+~~~
+{: .language-python}
+
+~~~
+print('Projection values of each frame to the first mode = {} \n'.format(data[0][0]))
+print('Eigvenvalues of the first 5 modes:\n', data[1][0])
+print('Eigvenvector of the first mode:\n', data[1][1][0])
+~~~
+{: .language-python}
+
+- Plot projection of each frame on the first two modes
+- Color by frame number
+
+[Available color maps](https://matplotlib.org/3.1.0/tutorials/colors/colormaps.html)
+
+~~~
+plt.scatter(data[0][0], data[0][1], cmap='viridis', marker='o', c=range(frames.n_frames), alpha=0.5)
+plt.xlabel('PC1')
+plt.ylabel('PC2')
+cbar = plt.colorbar()
+cbar.set_label('frame #')
+~~~
+{: .language-python}
+
+When you look at such plot and see two or more clusters this means that several different conformations exist in the simulation. Our graph shows that the first component separates data into two clusters. The first cluster existed in the beginning of the simulation, and later in the simulation the average projection on this component shifted from 10 to -5. This example trajectory is too short for any reliable conclusion. The results suggest that the system may not yet reached equilibrium.
+
 #### Visualizing normal modes with VMD plugin Normal Mode Wizard
 
 Download the file "modes.nmd"
 ~~~
-scp user100@moledyn.ace-net.training:scratch/workshop/pdb/6N4O/simulation/sim_pmemd/4-production/modes.nmd .
+scp user100@moledyn.ace-net.training:workshop_pytraj/example_02/modes.nmd .
 ~~~
 {: .language-bash}
 

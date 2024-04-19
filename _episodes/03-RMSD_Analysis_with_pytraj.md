@@ -13,7 +13,7 @@ keypoints:
 ---
 
 ### Computing RMSD
-We are now ready to use pytraj in Jupyter notebook. First load `pytraj`, `numpy`, and `matplotlib` modules. Then change into the directory where the input data files are located.
+We are now ready to use pytraj in a Jupyter notebook.
 
 [View Notebook]({{ site.repo_url }}/blob/{{ site.default_branch }}/code/Notebooks/pytraj_rmsd.ipynb)
 
@@ -22,7 +22,7 @@ import pytraj as pt
 import numpy as np
 from matplotlib import pyplot as plt
 
-%cd ~/workshop/pdb/6N4O/simulation/sim_pmemd/4-production
+%cd ~/workshop_pytraj/example_02
 ~~~
 {: .language-python}
 
@@ -33,6 +33,7 @@ traj=pt.iterload('mdcrd_nowat.xtc', top='prmtop_nowat.parm7')
 {: .language-python}
 
 - You can load a single filename, a list of filenames or a pattern. 
+- There are two functions for loading trajectories
 - The `ptraj.iterload` method returns a frame iterator object. This means that it registers what trajectories will be processed without actually loading them into memory. One frame will be loaded at a time when needed at the time of processing. This saves memory and allows for analysis of large trajectories. 
 - The `ptraj.load` method returns a trajectory object. In this case all trajectory frames are loaded into memory.
 
@@ -61,7 +62,7 @@ traj=traj.autoimage()
 ~~~
 {: .language-python}
 
-Generate time axis for RMSD plot. The trajectory was saved every 0.001 ns, and we have 2000 frames.
+Generate time axis for RMSD plot. The trajectory was saved every 0.001 ns, and we have 3140 frames.
 ~~~
 time=np.linspace(0, 3.139, 3140)
 ~~~
@@ -122,7 +123,7 @@ from matplotlib import pyplot as plt
 import seaborn as sns
 import pickle
 
-%cd ~/workshop/pdb/6N4O/simulation/sim_pmemd/4-production
+cd ~/workshop_pytraj/example_02
 ~~~
 {: .language-python}
 
@@ -148,7 +149,7 @@ traj=pt.iterload('mdcrd_nowat.xtc', top='prmtop_nowat.parm7')
 ref_coor = pt.load('inpcrd_nowat.pdb')
 
 # call pmap_mpi function for MPI.
-# we dont need to specify the nuber of CPUs, 
+# we dont need to specify the number of CPUs, 
 # because we will use srun to run the script
 data = pt.pmap_mpi(pt.rmsd, traj, mask='@C,N,O', ref=ref_coor)
 
@@ -160,7 +161,7 @@ if rank == 0:
 ~~~
 {: .language-python}
 
-Run the script on the cluster. We will take advantage of the resources we have already allocated with `salloc` command and simply use `srun` without requesting anything:   
+Run the script on the cluster. We will take advantage of the resources we have already allocated when we launched Jupyter server and simply use `srun` without requesting anything:   
 ~~~
 ! srun python rmsd.py
 ~~~
@@ -171,8 +172,8 @@ In practice you will be submitting large analysis jobs to the queue with the `sb
 When the job is done we import the results saved in the file `rmsd.dat` into Python:
 ~~~
 with open("rmsd.dat", "rb") as fp: 
-    rmsd=pickle.load(fp)
-data=rmsd.get('RMSD_00001')
+    data=pickle.load(fp)
+rmsd=data.get('RMSD_00001')
 ~~~
 {: .language-python}
 

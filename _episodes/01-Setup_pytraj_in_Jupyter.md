@@ -36,7 +36,30 @@ References:
 1. [PTRAJ and CPPTRAJ: Software for Processing and Analysis of Molecular Dynamics Trajectory Data](https://pubs.acs.org/doi/full/10.1021/ct400341p)
 
 
-### Installing a Python Virtual Environment and a Jupyter Notebook.
+### Installing modules for working with JupyterHub.
+Python interacts with Jupyter Notebook servers through IPython kernels. When we loaded the Amber/22 module the appropriate Python and IPython modules were loaded as well. The new IPython kernel has to be added to Jupyter before it can can be accessed from the notebook. The kernel can be named whatever you want, for instance, "env-pytraj".
+{: .instructor_notes}
+
+- Connect to the training cluster using SSH.
+- Run the following commands:
+~~~
+module load StdEnv/2023 amber/22
+pip install jupyter nglview==3.1.2 seaborn 
+python -m ipykernel install --user --name=env-pytraj
+~~~
+{: .language-bash}
+
+We also install two python modules that we will be using: 
+{: .instructor_notes}
+1. **NGLview**, a Jupyter widget for molecular visualization.
+3. **Seaborn**, a Python data visualization library. It extends a popular *matplotlib* library providing a high-level interface for drawing, templates for attractive and informative statistical graphics.
+{: .instructor_notes}
+
+- Go to JupyterHub and load StdEnv/2023 amber/22 before launching a notebook with env-pytraj kernel. 
+
+
+---
+### Installing a Python Virtual Environment and a Jupyter Notebook (only for working without JupyterHub).
 
 {: .instructor_notes}
 Jupyter notebooks are becoming increasingly popular for data analysis and visualization. One of Jupyter notebooks's most attractive features is its ability to combine different media (code, notes, and visualizations) in one place. Your work is much easier to manage and share with notebooks because everything is kept in one place that you can easily access.

@@ -20,20 +20,13 @@ First, we load *`pandas`* and *`matplotlib`* modules. Then move into the directo
 import pandas as pd
 import matplotlib.pyplot as plt
 
-%cd ~/workshop/pdb/1RGG/AMBER/3_equilibration/
+%cd ~/workshop_pytraj/example_01
 ~~~
 {: .language-python}
 
-Install script extracting energy components from simulation output files if you have not yet done it. To do so, run the following commands on the login node:
-~~~
-mkdir ~/bin 
-cp ~/workshop/scripts/extract_energies.sh ~/bin
-~~~
-{: .language-bash}
-
 Extract some energy components (total energy, temperature, pressure, and volume) from the equilibration log and save them in the file *`energy.dat`*:
 ~~~
-! extract_energies.sh equilibration_1.log
+!./extract_energies.sh equilibration_1.log
 ~~~
 {: .language-python}
 
